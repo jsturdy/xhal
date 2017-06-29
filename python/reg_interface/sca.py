@@ -8,7 +8,7 @@ import struct
 
 SLEEP_BETWEEN_COMMANDS=0.1
 DEBUG=False
-CTP7HOSTNAME = "eagle34"
+CTP7HOSTNAME = "eagle26"
 
 class Colors:            
     WHITE   = '\033[97m' 
@@ -45,30 +45,55 @@ ADDR_JTAG_TDO = None
 ADDR_JTAG_TDI = None
 
 def main():
+    import argparse
 
     instructions = ""
     ohMask = 0
     ohList = []
 
-    if len(sys.argv) < 3:
-        print('Usage: sca.py <oh_mask> <instructions>')
-        print('instructions:')
-        print('  r:        SCA reset will be done')
-        print('  h:        FPGA hard reset will be done')
-        print('  hh:       FPGA hard reset will be asserted and held')
-        print('  fpga-id:  FPGA ID will be read through JTAG')
-        print('  sysmon:   Read FPGA sysmon data repeatedly')
-        print('  program-fpga:   Program OH FPGA with a bitfile or an MCS file. Requires a parameter "bit" or "mcs" and a filename')
-        return
-    else:
-        ohMask = parseInt(sys.argv[1])
-        for i in range(0,12):
-            if check_bit(ohMask, i):
-                ohList.append(i)
-        instructions = sys.argv[2]
+    parser = argparse.ArgumentParser(description='Arguments to supply to sca.py')
+    parser.add_argument('card', metavar='card', type=str,
+                        help='Birdname CTP7 hostname')
+    parser.add_argument('oh_mask', metavar='oh_mask', type=str,
+                        help='Mask of OptoHybrids to operate on, hex (0x) or binary (0b) accepted')
+    parser.add_argument('command', metavar='command', type=str,
+                        help='Command to send via SCA')
+    parser.add_argument('-t', '--type', metavar='imgtype', type=str,
+                        help='Firmware image type \'program-fpga\' command')
+    parser.add_argument('-f','--file', metavar='imgfile', type=str,
+                        help='Firmware image file to load for \'program-fpga\' command')
+    parser.add_argument('--bitfile', metavar='bitfile', type=str,
+                        help='BIT image file to load for \'compare-mcs-bit\' command')
+    parser.add_argument('--mcsfile', metavar='mcsfile', type=str,
+                        help='MCS image file to load for \'compare-mcs-bit\' command')
+
+    args = parser.parse_args()
+    # if len(sys.argv) < 3:
+    #     print('Usage: sca.py <oh_mask> <instructions>')
+    #     print('instructions:')
+    #     print('  r:        SCA reset will be done')
+    #     print('  h:        FPGA hard reset will be done')
+    #     print('  hh:       FPGA hard reset will be asserted and held')
+    #     print('  fpga-id:  FPGA ID will be read through JTAG')
+    #     print('  sysmon:   Read FPGA sysmon data repeatedly')
+    #     print('  program-fpga:   Program OH FPGA with a bitfile or an MCS file. Requires a parameter "bit" or "mcs" and a filename')
+    #     return
+    # else:
+    #     ohMask = parseInt(sys.argv[1])
+    #     for i in range(0,12):
+    #         if check_bit(ohMask, i):
+    #             ohList.append(i)
+    #     instructions = sys.argv[2]
+    ohMask = parseInt(args.oh_mask)
+    for i in range(0,12):
+        if check_bit(ohMask, i):
+            ohList.append(i)
+            pass
+        pass
+    instructions = args.command
 
     parseXML()
-    rpc_connect("eagle34")
+    rpc_connect(args.card) # please fix me!! i don't like to be hard-coded :( :( :( :(
     initJtagRegAddrs()
 
     heading("Hola, I'm SCA controller tester :)")
@@ -131,24 +156,27 @@ def main():
         disableJtag()
 
     elif instructions == 'program-fpga':
-        if len(sys.argv) < 5:
-            print('Usage: sca.py program-fpga <file-type> <filename>')
+        if not args.imgtype or not args.imgfile:
+        # if len(sys.argv) < 5:
+            print('Usage: sca.py card oh_mask program-fpga -t<file-type> -f<filename>')
             print('file-type can be "mcs" or "bit"')
             return
 
-        type = sys.argv[3]
-        filename = sys.argv[4]
+        # ftype = sys.argv[3]
+        # filename = sys.argv[4]
+        ftype    = args.imgtype
+        filename = args.imgfile
 
-        if (type != "bit") and (type != "mcs"):
-            print('Unrecognized type "' + type + '".. must be either "bit" or "mcs"')
+        if (ftype != "bit") and (ftype != "mcs"):
+            print('Unrecognized type "' + ftype + '".. must be either "bit" or "mcs"')
             return
 
-        if type != filename[-3:]:
-            print("The type " + type + " doesn't match the file type, which is " + filename[-3:] + "... sorry, exiting..")
+        if ftype != filename[-3:]:
+            print("The type " + ftype + " doesn't match the file type, which is " + filename[-3:] + "... sorry, exiting..")
             return
 
         words = []
-        if type == "mcs":
+        if ftype == "mcs":
             print("Reading the MCS file...")
             bytes = readMcs(filename)
             if len(bytes) < VIRTEX6_FIRMWARE_SIZE:
@@ -158,7 +186,7 @@ def main():
             for i in range(0, VIRTEX6_FIRMWARE_SIZE/4):
                 words.append((bytes[i*4 + 2] << 24) + (bytes[i*4 + 3] << 16) + (bytes[i*4] << 8) + (bytes[i*4 + 1]))
 
-        elif type == "bit":
+        elif ftype == "bit":
             f = open(filename, "rb")
             f.read(119) # skip the header
             print("Reading the bit file")
@@ -346,12 +374,15 @@ def main():
             writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.FPGA_HARD_RESET'), 0x1)
 
     elif instructions == 'compare-mcs-bit':
-        if len(sys.argv) < 4:
-            print("Usage: sca.py compare-mcs-bit <mcs_filename> <bit_filename>")
+        if not args.bitfile or not args.mcsfile:
+        # if len(sys.argv) < 4:
+            print("Usage: sca.py compare-mcs-bit --mcsfile=<mcs_filename> --bitfile=<bit_filename>")
             return
 
-        mcsFilename = sys.argv[2]
-        bitFilename = sys.argv[3]
+        # mcsFilename = sys.argv[2]
+        # bitFilename = sys.argv[3]
+        mcsFilename = args.mcsfile
+        bitFilename = args.bitfile
         mcsBytes = readMcs(mcsFilename)
 
         bitBytes = array.array('L')
