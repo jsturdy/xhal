@@ -6,63 +6,37 @@ IncludeDirs += ${XHAL_ROOT}/xcompile/xerces-c-3.1.4/src
 IncludeDirs += ${XHAL_ROOT}/xcompile/log4cplus-1.1.2/include
 INC=$(IncludeDirs:%=-I%)
 
-Libraries+= -llog4cplus -lxerces-c 
-LibraryDirs+=-L${XHAL_ROOT}/lib
+Libraries+= -llog4cplus -lxerces-c -lstdc++
+LibraryDirs+=-L${XHAL_ROOT}/lib/arm
 LIB=$(LibraryDirs)
 LIB+= $(Libraries)
 
 LDFLAGS= -shared
-SRCS = $(shell echo src/common/utils/*.cpp)
-SRCS_XHAL = $(shell echo src/common/*.cpp)
-OBJS = $(SRCS:.cpp=.o)
+SRCS_XHAL = $(shell echo src/common/utils/*.cpp)
 OBJS_XHAL = $(SRCS_XHAL:.cpp=.o)
+OBJS_RW = xcompile/lib_rw_ctp7/libmemsvc.o xcompile/lib_rw_ctp7/rwreg.o
 
-SRCS_TEST = test/main_test.cpp
-OBJS_TEST = $(SRCS_TEST:.cpp=.o)
+XHAL_LIB=${XHAL_ROOT}/lib/arm/libxhal.so
+RW_LIB=${XHAL_ROOT}/lib/arm/librwreg.so
 
-SRCS_RPC_SA = $(shell echo src/common/rpc_standalone_client/*.cpp)
-OBJS_RPC_SA = $(SRCS_RPC_SA:.cpp=.o)
+all:${XHAL_LIB} ${RW_LIB}
 
-TARGET_LIB=${XHAL_ROOT}/lib/libxhal_ctp7.so
-#TARGET_TEST=${XHAL_ROOT}/test/bin/test
-#RPC_SA_LIB=${XHAL_ROOT}/lib/librwreg.so
+utils:${XHAL_LIB}
 
-#all:${TARGET_LIB} ${TARGET_TEST} ${RPC_SA_LIB}
-all:${TARGET_LIB}
-
-utils:${TARGET_LIB}
-
-#$(TARGET_LIB): $(OBJS) $(OBJS_XHAL)
-$(TARGET_LIB): $(OBJS) 
-	    $(CC) $(CFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) $(LIB)  -o $@ $^
-	    #$(CC) $(CCFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) $(LIB) -lwiscrpcsvc -o $@ $^
-
-#$(SRCS:.cpp=.d):%.d:%.cpp
-$(OBJS):$(SRCS)
-	    $(CC) $(CFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
-	    #$(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
+$(XHAL_LIB): $(OBJS_XHAL) 
+	    $(CC) $(CFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) $(LIB) -o $@ $^
 
 $(OBJS_XHAL):$(SRCS_XHAL)
 	    $(CC) $(CFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
-	    #$(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
 
-test:${TARGET_TEST}
-$(TARGET_TEST): $(OBJS_TEST)
-	    $(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -lxhal -lwiscrpcsvc -o $@ $^
+$(RW_LIB): $(OBJS_RW)
+	    $(CXX) -std=c++0x $(LDFLAGS) -fnon-call-exceptions -shared -o $@ $(OBJS_RW) 
 
-$(OBJS_TEST):$(SRCS_TEST)
-	    $(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -lxhal -c -o $@ $<
-
-rpc_standalone:${RPC_SA_LIB}
-$(RPC_SA_LIB): $(OBJS_RPC_SA)
-	    $(CC) $(CCFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) -L${XHAL_ROOT}/lib -lwiscrpcsvc -o $@ $^
-
-$(OBJS_RPC_SA):$(SRCS_RPC_SA)
-	    $(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) -L${XHAL_ROOT}/lib -lwiscrpcsvc -c -o $@ $<
+%.o: %.c
+	$(CC) -std=gnu99 -c $(CFLAGS) -o $@ $<
+%.o: %.cc
+	$(CXX) -std=c++0x -c $(CFLAGS) -o $@ $<
 
 .PHONY: clean
 clean:
-	    -${RM} ${TARGET_LIB} ${OBJS} ${OBJS_XHAL} ${TARGET_TEST} ${OBJS_TEST} ${RPC_SA_LIB} ${OBJS_RPC_SA}
-
-
-
+	    -${RM} ${XHAL_LIB} ${OBJS_XHAL} ${RW_LIB} ${OBJS_RW}

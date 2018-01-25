@@ -1,52 +1,63 @@
 import xml.etree.ElementTree as xml
-import sys, os, subprocess
+import sys, os, subprocess, socket
 from time import sleep
 #import uhal
 from ctypes import *
 
-lib = CDLL(os.getenv("XHAL_ROOT")+"/lib/librwreg.so")
-rReg = lib.getReg
-rReg.restype = c_uint
-rReg.argtypes=[c_uint]
-wReg = lib.putReg
-wReg.argtypes=[c_uint,c_uint]
-rpc_connect = lib.init
-rpc_connect.argtypes = [c_char_p]
-rpc_connect.restype = c_uint
-rBlock = lib.getBlock
-rBlock.restype = c_uint
-rBlock.argtypes=[c_uint,POINTER(c_uint32)]
-getRPCTTCmain = lib.getmonTTCmain
-getRPCTTCmain.argtypes = [POINTER(c_uint32)]
-getRPCTTCmain.restype = c_uint
+hostname = socket.gethostname()
+if 'eagle' in hostname:
+  lib = CDLL(os.getenv("GEM_PATH")+"/lib/librwreg.so")
+  rReg = lib.getReg
+  rReg.restype = c_uint
+  rReg.argtypes=[c_uint]
+  wReg = lib.putReg
+  wReg.argtypes=[c_uint,c_uint]
+  ADDRESS_TABLE_TOP = os.getenv("GEM_PATH")+'/xml/gem_amc_top.xml'
+else:
+  lib = CDLL(os.getenv("XHAL_ROOT")+"/lib/x86_64/librpcman.so")
+  rReg = lib.getReg
+  rReg.restype = c_uint
+  rReg.argtypes=[c_uint]
+  wReg = lib.putReg
+  wReg.argtypes=[c_uint,c_uint]
+  rpc_connect = lib.init
+  rpc_connect.argtypes = [c_char_p]
+  rpc_connect.restype = c_uint
+  rBlock = lib.getBlock
+  rBlock.restype = c_uint
+  rBlock.argtypes=[c_uint,POINTER(c_uint32)]
+  getRPCTTCmain = lib.getmonTTCmain
+  getRPCTTCmain.argtypes = [POINTER(c_uint32)]
+  getRPCTTCmain.restype = c_uint
+  
+  getRPCTRIGGERmain = lib.getmonTRIGGERmain
+  getRPCTRIGGERmain.argtypes = [POINTER(c_uint32), c_uint32]
+  getRPCTRIGGERmain.restype = c_uint
+  
+  getRPCTRIGGEROHmain = lib.getmonTRIGGEROHmain
+  getRPCTRIGGEROHmain.argtypes = [POINTER(c_uint32), c_uint32]
+  getRPCTRIGGEROHmain.restype = c_uint
+  
+  getRPCDAQmain = lib.getmonDAQmain
+  getRPCDAQmain.argtypes = [POINTER(c_uint32)]
+  getRPCDAQmain.restype = c_uint
+  
+  getRPCDAQOHmain = lib.getmonDAQOHmain
+  getRPCDAQOHmain.argtypes = [POINTER(c_uint32), c_uint32]
+  getRPCDAQOHmain.restype = c_uint
+  
+  getRPCOHmain = lib.getmonOHmain
+  getRPCOHmain.argtypes = [POINTER(c_uint32), c_uint32]
+  getRPCOHmain.restype = c_uint
+  
+  rList = lib.getList
+  rList.restype = c_uint
+  rList.argtypes=[POINTER(c_uint32),POINTER(c_uint32)]
 
-getRPCTRIGGERmain = lib.getmonTRIGGERmain
-getRPCTRIGGERmain.argtypes = [POINTER(c_uint32), c_uint32]
-getRPCTRIGGERmain.restype = c_uint
-
-getRPCTRIGGEROHmain = lib.getmonTRIGGEROHmain
-getRPCTRIGGEROHmain.argtypes = [POINTER(c_uint32), c_uint32]
-getRPCTRIGGEROHmain.restype = c_uint
-
-getRPCDAQmain = lib.getmonDAQmain
-getRPCDAQmain.argtypes = [POINTER(c_uint32)]
-getRPCDAQmain.restype = c_uint
-
-getRPCDAQOHmain = lib.getmonDAQOHmain
-getRPCDAQOHmain.argtypes = [POINTER(c_uint32), c_uint32]
-getRPCDAQOHmain.restype = c_uint
-
-getRPCOHmain = lib.getmonOHmain
-getRPCOHmain.argtypes = [POINTER(c_uint32), c_uint32]
-getRPCOHmain.restype = c_uint
-
-rList = lib.getList
-rList.restype = c_uint
-rList.argtypes=[POINTER(c_uint32),POINTER(c_uint32)]
+  ADDRESS_TABLE_TOP = os.getenv("XHAL_ROOT")+'/etc/gem_amc_top.xml'
 
 
 DEBUG = True
-ADDRESS_TABLE_TOP = os.getenv("XHAL_ROOT")+'/etc/gem_amc_top.xml'
 nodes = {}
 #nodes = []
 
@@ -260,6 +271,7 @@ def writeReg(reg, value):
     if 'w' not in reg.permission:
         return 'No write permission!'
     # Apply Mask if applicable
+    print "Initial value to write: %s, register %s"% (value,reg.name)
     if reg.mask is not None:
         shift_amount=0
         for bit in reversed('{0:b}'.format(reg.mask)):

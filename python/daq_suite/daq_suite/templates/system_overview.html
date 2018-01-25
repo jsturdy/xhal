@@ -52,7 +52,8 @@
             <span class="label label-default full-width"> 
             {% csrf_token %}
             EXPERT CONTROLS:
-            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_reset" name="daq_reset">DAQ RESET</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_reset" name="daq_reset">HOLD DAQ IN RESET</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_release" name="daq_release">RELEASE DAQ RESET</button>
             <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_enable" name="daq_enable">ENABLE DAQ</button>
             <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_disable" name="daq_disable">DISABLE DAQ</button>
             <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="block_l1a" name="bloc_l1a">BLOCK L1A</button>

@@ -25,7 +25,7 @@ SECRET_KEY = '$^68=-(p)+3h)#+cdoj^j_c0+r6#4zx-3#a+il7t_%_=1l(-xv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['kvm-s3562-1-ip151-107.cms']
+ALLOWED_HOSTS = ['kvm-s3562-1-ip151-107.cms','cosmicstandtif.cern.ch','gem904daq01.cern.ch']
 
 
 # Application definition

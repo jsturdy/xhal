@@ -50,8 +50,8 @@ def main():
     ohMask = 0
     ohList = []
 
-    if len(sys.argv) < 3:
-        print('Usage: sca.py <oh_mask> <instructions>')
+    if len(sys.argv) < 4:
+        print('Usage: sca.py <card_name> <oh_mask> <instructions>')
         print('instructions:')
         print('  r:        SCA reset will be done')
         print('  h:        FPGA hard reset will be done')
@@ -61,14 +61,14 @@ def main():
         print('  program-fpga:   Program OH FPGA with a bitfile or an MCS file. Requires a parameter "bit" or "mcs" and a filename')
         return
     else:
-        ohMask = parseInt(sys.argv[1])
+        ohMask = parseInt(sys.argv[2])
         for i in range(0,12):
             if check_bit(ohMask, i):
                 ohList.append(i)
-        instructions = sys.argv[2]
+        instructions = sys.argv[3]
 
     parseXML()
-    rpc_connect("eagle34")
+    rpc_connect(sys.argv[1])
     initJtagRegAddrs()
 
     heading("Hola, I'm SCA controller tester :)")

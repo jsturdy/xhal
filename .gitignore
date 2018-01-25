@@ -1,11 +1,44 @@
-Makefile~
-*.nfs*
-*.*~
-*.h~
-*.cpp~
-*.o
-*.pyc
-python/*.pyc
-python/reg_interface/*.pyc
-test/bin
-test/bin/*
+# Ignore everything
+*
+# Don't ignore subdirectories
+!*/
+# Don't ignore source files, etc
+!*.gitignore
+!*.c
+!*.cpp
+!*.cc
+!*.C
+!*.h
+!*.hh
+!*.hpp
+!*.py
+# Ignore __init__.py files ?
+# __init__.py
+# Don't ignore makefiles, etc.
+!Makefile
+!*.mk
+!*.cmake
+!*.in
+# Don't ignore special files
+!*.md
+!*.rst
+!README
+!LICENSE
+!CONTRIBUTING
+!COPYING
+!ChangeLog
+!INSTALL
+!AUTHORS
+## this list is getting long, just keep 
+# Don't ignore documentation
+!doc/*
+# Keep all in xcompile
+!xcompile/*
+# Ignore RPM directories
+*/rpm
+# Ignore junk/temp files
+*.tmp
+*~
+*.#*
+# NOT unignoring address tables (these should really be kept in a single place across all repositories, so need to discuss that
+*.xml

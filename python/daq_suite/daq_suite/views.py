@@ -148,6 +148,9 @@ def expert_controls_main_imp(request):
     elif "daq_reset" in request.body:
       reg = getNode("GEM_AMC.DAQ.CONTROL.RESET")
       writeReg(reg,0x1)
+    elif "daq_release" in request.body:
+      reg = getNode("GEM_AMC.DAQ.CONTROL.RESET")
+      writeReg(reg,0x0)
     elif "daq_enable" in request.body:
       reg = getNode("GEM_AMC.DAQ.CONTROL.DAQ_ENABLE")
       writeReg(reg,0x1)

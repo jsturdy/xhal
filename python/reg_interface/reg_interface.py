@@ -1,12 +1,38 @@
+#!/usr/bin/env python
 from cmd import Cmd
 import sys, os, subprocess
 from rw_reg import *
 from vfat_config import *
 
+try:
+    import readline
+except ImportError:
+    readline = None
+
 MAX_OH_NUM = 11
 
+histfile = os.path.expanduser('~/.reg_interface_history')
+histfile_size = 1000
 
 class Prompt(Cmd):
+
+    def preloop(self):
+        if readline and os.path.exists(histfile):
+            readline.read_history_file(histfile)
+
+    def postloop(self):
+        if readline:
+            readline.set_history_length(histfile_size)
+            readline.write_history_file(histfile)
+
+    def cmdloop_with_keyboard_interrupt(self):
+        doQuit = False
+        while doQuit != True:
+            try:
+                self.cmdloop()
+                doQuit = True
+            except KeyboardInterrupt:
+                sys.stdout.write('\n')
 
     def do_connect(self, hostname):
         if (rpc_connect(hostname)):
@@ -296,16 +322,34 @@ class Prompt(Cmd):
 
 
     def do_kw(self, args):
-        """Read all registers containing KeyWord. USAGE: readKW <KeyWord>"""
-        if getNodesContaining(args) is not None and args!='':
-            for reg in getNodesContaining(args):
-                address = reg.real_address
-                if 'r' in str(reg.permission):
-                    print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7),readReg(reg)
-                elif reg.isModule: print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7) #,'Module!'
-                else: print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7) #,'No read permission!' 
-        else: print args,'not found!'
-
+        """Read all registers containing KeyWord. USAGE: readKW <KeyWord> or readKW <KeyWord> link"""
+        arglist = args.split()
+        if len(arglist)==1:
+            if getNodesContaining(args) is not None and args!='':
+                for reg in getNodesContaining(args):
+                    address = reg.real_address
+                    if 'r' in str(reg.permission):
+                        print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7),readReg(reg)
+                    elif reg.isModule: print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7) #,'Module!'
+                    else: print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7) #,'No read permission!' 
+            else: print args,'not found!'
+        elif len(arglist)==2:
+            found = False
+            if getNodesContaining(arglist[0]) is not None and arglist[0]!='':
+                for reg in getNodesContaining(arglist[0]):
+                    ohx = 'OH%s.'%(arglist[1])
+                    if ohx not in reg.name:
+                        continue
+                    found = True
+                    address = reg.real_address
+                    if 'r' in str(reg.permission):
+                        print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7),readReg(reg)
+                    elif reg.isModule: print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7) #,'Module!'
+                    else: print hex(address).rstrip('L'),reg.permission,'\t',tabPad(reg.name,7) #,'No read permission!' 
+                if not found: 
+                    print arglist[0],' for link %s not found!'%(arglist[1])
+            else: print arglist[0],'not found!'
+        else: print "Incorrect number of arguments!"
 
     def do_readAll(self, args):
         """Read all registers with read-permission"""
@@ -324,6 +368,7 @@ class Prompt(Cmd):
             return
         if reg is not None: 
             address = reg.real_address
+            print hex(address),'\t node: ', reg.name
             print hex(address),'\t',readAddress(address)
         else:
             print args,'not found!' 
@@ -440,8 +485,6 @@ if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option("-e", "--execute", type="str", dest="exe",
                       help="Function to execute once", metavar="exe", default=None)
-    # parser.add_option("-g", "--gtx", type="int", dest="gtx",
-    #                   help="GTX on the GLIB", metavar="gtx", default=0)
     parser.add_option("-n", "--hostname", type="string", dest="hostname",
                       help="CTP7 hostname, default is the one used at p5", default="amc-s2e01-23-03")
 
@@ -457,12 +500,10 @@ if __name__ == '__main__':
     else:
         try:
             parseXML()
-            #if (rpc_connect(options.hostname)):
-            #  print '[Connection error] RPC connection failed'
-            #  sys.exit()
             prompt = Prompt()
             prompt.prompt = 'CTP7 > '
-            prompt.cmdloop('Starting CTP7 Register Command Line Interface. Please connect to CTP7 using connect <hostname> command')
+            print 'Starting CTP7 Register Command Line Interface. Please connect to CTP7 using connect <hostname> command unless you use it directly at the CTP7'
+            prompt.cmdloop_with_keyboard_interrupt()
         except TypeError:
             print '[TypeError] Incorrect usage. See help'
         except KeyboardInterrupt:

@@ -1,5 +1,5 @@
 from rw_reg import *
-NOH=10
+NOH=1
 
 def getTTCmain():
   namelist=['MMCM_LOCKED','TTC_SINGLE_ERROR_CNT','BC0_LOCKED','L1A_ID','L1A_RATE']
@@ -81,6 +81,7 @@ def getKILLMASKmain():
 def getTRIGGEROHmain():
   displaystring=[]
   namelist=[]
+  values = []
   res = (c_uint32 * (2*NOH))()
   res_code = getRPCTRIGGEROHmain(res, NOH)
   if res_code == 0:
@@ -180,6 +181,7 @@ def getIEMASKmain():
 def getDAQOHmain():
   displaystring=[]
   res = (c_uint32 * (6*NOH))()
+  values = []
   res_code = getRPCDAQOHmain(res, NOH)
   if res_code == 0:
     values = [c for c in res]
@@ -216,6 +218,7 @@ def getDAQOHmain():
 def getOHmain():
   displaystring=[]
   res = (c_uint32 * (NOH*7))()
+  values = []
   res_code = getRPCOHmain(res, NOH)
   if res_code == 0:
     values = [c for c in res]

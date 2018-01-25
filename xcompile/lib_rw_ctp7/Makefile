@@ -5,7 +5,7 @@ include ../apps.common.mk
 
 APP_OBJS=libmemsvc.o rwreg.o
 LIB_HEADERS=CTP7.hh
-APP=../../lib/librwreg_ctp7
+APP=../../lib/arm/librwreg
 
 all: build 
 

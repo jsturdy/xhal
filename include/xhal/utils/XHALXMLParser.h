@@ -16,9 +16,9 @@
 #include <unordered_map>
 #include <experimental/optional>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+//#include <boost/algorithm/string.hpp>
+//#include <boost/lexical_cast.hpp>
+//#include <boost/format.hpp>
 
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
