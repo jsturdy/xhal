@@ -16,9 +16,9 @@
 #include <unordered_map>
 #include <experimental/optional>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
+//#include <boost/algorithm/string.hpp>
+//#include <boost/lexical_cast.hpp>
+//#include <boost/format.hpp>
 
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
@@ -90,6 +90,10 @@ namespace xhal {
          * @brief not implemented
          */
         std::experimental::optional<xhal::utils::Node> getNodeFromAddress(const uint32_t nodeAddress);
+        /**
+         * @brief return all nodes
+         */
+        std::unordered_map<std::string,xhal::utils::Node> getAllNodes();
     
       private:
         std::string m_xmlFile;

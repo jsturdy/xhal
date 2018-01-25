@@ -1,0 +1,80 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  
+  <title>CTP7</title>
+  
+  
+  <!-- Bootstrap Core CSS -->
+  <link  rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+  
+  <!-- Custom CSS -->
+  <link href="{% static 'css/portfolio-item.css' %}" rel="stylesheet">
+  <link href="{% static 'css/simple-sidebar.css' %}" rel="stylesheet">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+<style media="screen" type="text/css">
+.progress {
+    margin-bottom: 0 !important;
+    background-color: #aaa;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.progress.vertical {
+    position: relative;
+    width: 20px;
+    background-color: #aaa;
+    min-height: 120px;
+    float: left;
+    margin-right: 20px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border: none;
+}
+.table {
+    margin-bottom: 0 !important;
+}
+.full-width {
+    display:block;
+}
+.input-xs {
+    height: 22px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1.5; //If Placeholder of the input is moved up, rem/modify this.
+    border-radius: 3px;
+}
+</style>
+</head>
+
+<body>
+{% block nav %}
+{% include 'nav.html' %}
+{% endblock %}
+{% if main %}
+{% include "system_overview.html" %}
+{% endif %}
+{% block module %}
+{% endblock %}
+ <!-- jQuery -->
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/system_overview.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,457 @@
+main.o: main.cxx /home/mdalchen/work/stage/usr/include/stdc-predef.h \
+ ../../include/log4cplus/logger.h ../../include/log4cplus/config.hxx \
+ ../../include/log4cplus/config/defines.hxx \
+ ../../include/log4cplus/helpers/thread-config.h \
+ ../../include/log4cplus/loglevel.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/vector \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_algobase.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/c++config.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/os_defines.h \
+ /home/mdalchen/work/stage/usr/include/features.h \
+ /home/mdalchen/work/stage/usr/include/sys/cdefs.h \
+ /home/mdalchen/work/stage/usr/include/bits/wordsize.h \
+ /home/mdalchen/work/stage/usr/include/gnu/stubs.h \
+ /home/mdalchen/work/stage/usr/include/gnu/stubs-hard.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/cpu_defines.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/functexcept.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/exception_defines.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/cpp_type_traits.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/type_traits.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/numeric_traits.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_pair.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/move.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/concept_check.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_iterator_base_types.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_iterator_base_funcs.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/debug/debug.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_iterator.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ptr_traits.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/predefined_ops.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/allocator.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/c++allocator.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/new_allocator.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/new \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/exception \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/atomic_lockfree_defines.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/memoryfwd.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_construct.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/alloc_traits.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_uninitialized.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_vector.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_bvector.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/range_access.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/vector.tcc \
+ ../../include/log4cplus/tstring.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/string \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stringfwd.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/char_traits.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/postypes.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cwchar \
+ /home/mdalchen/work/stage/usr/include/wchar.h \
+ /home/mdalchen/work/stage/usr/include/stdio.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib/gcc/arm-linux-gnueabihf/4.9.2/include/stdarg.h \
+ /home/mdalchen/work/stage/usr/include/bits/wchar.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib/gcc/arm-linux-gnueabihf/4.9.2/include/stddef.h \
+ /home/mdalchen/work/stage/usr/include/xlocale.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/localefwd.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/c++locale.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/clocale \
+ /home/mdalchen/work/stage/usr/include/locale.h \
+ /home/mdalchen/work/stage/usr/include/bits/locale.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/iosfwd \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cctype \
+ /home/mdalchen/work/stage/usr/include/ctype.h \
+ /home/mdalchen/work/stage/usr/include/bits/types.h \
+ /home/mdalchen/work/stage/usr/include/bits/typesizes.h \
+ /home/mdalchen/work/stage/usr/include/endian.h \
+ /home/mdalchen/work/stage/usr/include/bits/endian.h \
+ /home/mdalchen/work/stage/usr/include/bits/byteswap.h \
+ /home/mdalchen/work/stage/usr/include/bits/byteswap-16.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ostream_insert.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/cxxabi_forced.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_function.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/backward/binders.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_string.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/atomicity.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/gthr.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/gthr-default.h \
+ /home/mdalchen/work/stage/usr/include/pthread.h \
+ /home/mdalchen/work/stage/usr/include/sched.h \
+ /home/mdalchen/work/stage/usr/include/time.h \
+ /home/mdalchen/work/stage/usr/include/bits/sched.h \
+ /home/mdalchen/work/stage/usr/include/bits/time.h \
+ /home/mdalchen/work/stage/usr/include/bits/timex.h \
+ /home/mdalchen/work/stage/usr/include/bits/pthreadtypes.h \
+ /home/mdalchen/work/stage/usr/include/bits/setjmp.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/atomic_word.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_string.tcc \
+ ../../include/log4cplus/tchar.h \
+ ../../include/log4cplus/spi/appenderattachable.h \
+ ../../include/log4cplus/appender.h ../../include/log4cplus/layout.h \
+ ../../include/log4cplus/streams.h \
+ ../../include/log4cplus/helpers/pointer.h \
+ ../../include/log4cplus/thread/syncprims.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/algorithm \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/utility \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_relops.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_algo.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cstdlib \
+ /home/mdalchen/work/stage/usr/include/stdlib.h \
+ /home/mdalchen/work/stage/usr/include/bits/waitflags.h \
+ /home/mdalchen/work/stage/usr/include/bits/waitstatus.h \
+ /home/mdalchen/work/stage/usr/include/sys/types.h \
+ /home/mdalchen/work/stage/usr/include/sys/select.h \
+ /home/mdalchen/work/stage/usr/include/bits/select.h \
+ /home/mdalchen/work/stage/usr/include/bits/sigset.h \
+ /home/mdalchen/work/stage/usr/include/sys/sysmacros.h \
+ /home/mdalchen/work/stage/usr/include/alloca.h \
+ /home/mdalchen/work/stage/usr/include/bits/stdlib-bsearch.h \
+ /home/mdalchen/work/stage/usr/include/bits/stdlib-float.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/algorithmfwd.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_heap.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_tempbuf.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cassert \
+ /home/mdalchen/work/stage/usr/include/assert.h \
+ ../../include/log4cplus/spi/filter.h \
+ ../../include/log4cplus/helpers/lockfile.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/memory \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_raw_storage_iter.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/backward/auto_ptr.h \
+ ../../include/log4cplus/spi/loggerfactory.h \
+ ../../include/log4cplus/socketappender.h \
+ ../../include/log4cplus/helpers/socket.h \
+ ../../include/log4cplus/helpers/socketbuffer.h \
+ ../../include/log4cplus/thread/threads.h \
+ ../../include/log4cplus/helpers/sleep.h \
+ ../../include/log4cplus/loggingmacros.h \
+ ../../include/log4cplus/helpers/snprintf.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cstdarg \
+ ../../include/log4cplus/tracelogger.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/sstream \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/istream \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ios \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ios_base.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_classes.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_classes.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/streambuf \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/streambuf.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_ios.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_facets.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cwctype \
+ /home/mdalchen/work/stage/usr/include/wctype.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/ctype_base.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/streambuf_iterator.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/ctype_inline.h \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_facets.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_ios.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ostream \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ostream.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/istream.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/sstream.tcc \
+ /data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/iomanip
+
+/home/mdalchen/work/stage/usr/include/stdc-predef.h:
+
+../../include/log4cplus/logger.h:
+
+../../include/log4cplus/config.hxx:
+
+../../include/log4cplus/config/defines.hxx:
+
+../../include/log4cplus/helpers/thread-config.h:
+
+../../include/log4cplus/loglevel.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/vector:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_algobase.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/c++config.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/os_defines.h:
+
+/home/mdalchen/work/stage/usr/include/features.h:
+
+/home/mdalchen/work/stage/usr/include/sys/cdefs.h:
+
+/home/mdalchen/work/stage/usr/include/bits/wordsize.h:
+
+/home/mdalchen/work/stage/usr/include/gnu/stubs.h:
+
+/home/mdalchen/work/stage/usr/include/gnu/stubs-hard.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/cpu_defines.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/functexcept.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/exception_defines.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/cpp_type_traits.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/type_traits.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/numeric_traits.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_pair.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/move.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/concept_check.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_iterator_base_types.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_iterator_base_funcs.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/debug/debug.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_iterator.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ptr_traits.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/predefined_ops.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/allocator.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/c++allocator.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/new_allocator.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/new:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/exception:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/atomic_lockfree_defines.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/memoryfwd.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_construct.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/alloc_traits.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_uninitialized.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_vector.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_bvector.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/range_access.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/vector.tcc:
+
+../../include/log4cplus/tstring.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/string:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stringfwd.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/char_traits.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/postypes.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cwchar:
+
+/home/mdalchen/work/stage/usr/include/wchar.h:
+
+/home/mdalchen/work/stage/usr/include/stdio.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib/gcc/arm-linux-gnueabihf/4.9.2/include/stdarg.h:
+
+/home/mdalchen/work/stage/usr/include/bits/wchar.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/lib/gcc/arm-linux-gnueabihf/4.9.2/include/stddef.h:
+
+/home/mdalchen/work/stage/usr/include/xlocale.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/localefwd.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/c++locale.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/clocale:
+
+/home/mdalchen/work/stage/usr/include/locale.h:
+
+/home/mdalchen/work/stage/usr/include/bits/locale.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/iosfwd:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cctype:
+
+/home/mdalchen/work/stage/usr/include/ctype.h:
+
+/home/mdalchen/work/stage/usr/include/bits/types.h:
+
+/home/mdalchen/work/stage/usr/include/bits/typesizes.h:
+
+/home/mdalchen/work/stage/usr/include/endian.h:
+
+/home/mdalchen/work/stage/usr/include/bits/endian.h:
+
+/home/mdalchen/work/stage/usr/include/bits/byteswap.h:
+
+/home/mdalchen/work/stage/usr/include/bits/byteswap-16.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ostream_insert.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/cxxabi_forced.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_function.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/backward/binders.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_string.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ext/atomicity.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/gthr.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/gthr-default.h:
+
+/home/mdalchen/work/stage/usr/include/pthread.h:
+
+/home/mdalchen/work/stage/usr/include/sched.h:
+
+/home/mdalchen/work/stage/usr/include/time.h:
+
+/home/mdalchen/work/stage/usr/include/bits/sched.h:
+
+/home/mdalchen/work/stage/usr/include/bits/time.h:
+
+/home/mdalchen/work/stage/usr/include/bits/timex.h:
+
+/home/mdalchen/work/stage/usr/include/bits/pthreadtypes.h:
+
+/home/mdalchen/work/stage/usr/include/bits/setjmp.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/atomic_word.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_string.tcc:
+
+../../include/log4cplus/tchar.h:
+
+../../include/log4cplus/spi/appenderattachable.h:
+
+../../include/log4cplus/appender.h:
+
+../../include/log4cplus/layout.h:
+
+../../include/log4cplus/streams.h:
+
+../../include/log4cplus/helpers/pointer.h:
+
+../../include/log4cplus/thread/syncprims.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/algorithm:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/utility:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_relops.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_algo.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cstdlib:
+
+/home/mdalchen/work/stage/usr/include/stdlib.h:
+
+/home/mdalchen/work/stage/usr/include/bits/waitflags.h:
+
+/home/mdalchen/work/stage/usr/include/bits/waitstatus.h:
+
+/home/mdalchen/work/stage/usr/include/sys/types.h:
+
+/home/mdalchen/work/stage/usr/include/sys/select.h:
+
+/home/mdalchen/work/stage/usr/include/bits/select.h:
+
+/home/mdalchen/work/stage/usr/include/bits/sigset.h:
+
+/home/mdalchen/work/stage/usr/include/sys/sysmacros.h:
+
+/home/mdalchen/work/stage/usr/include/alloca.h:
+
+/home/mdalchen/work/stage/usr/include/bits/stdlib-bsearch.h:
+
+/home/mdalchen/work/stage/usr/include/bits/stdlib-float.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/algorithmfwd.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_heap.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_tempbuf.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cassert:
+
+/home/mdalchen/work/stage/usr/include/assert.h:
+
+../../include/log4cplus/spi/filter.h:
+
+../../include/log4cplus/helpers/lockfile.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/memory:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/stl_raw_storage_iter.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/backward/auto_ptr.h:
+
+../../include/log4cplus/spi/loggerfactory.h:
+
+../../include/log4cplus/socketappender.h:
+
+../../include/log4cplus/helpers/socket.h:
+
+../../include/log4cplus/helpers/socketbuffer.h:
+
+../../include/log4cplus/thread/threads.h:
+
+../../include/log4cplus/helpers/sleep.h:
+
+../../include/log4cplus/loggingmacros.h:
+
+../../include/log4cplus/helpers/snprintf.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cstdarg:
+
+../../include/log4cplus/tracelogger.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/sstream:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/istream:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ios:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ios_base.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_classes.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_classes.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/streambuf:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/streambuf.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_ios.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_facets.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/cwctype:
+
+/home/mdalchen/work/stage/usr/include/wctype.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/ctype_base.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/streambuf_iterator.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/arm-linux-gnueabihf/bits/ctype_inline.h:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/locale_facets.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/basic_ios.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/ostream:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/ostream.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/istream.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/bits/sstream.tcc:
+
+/data/bigdisk/sw/Xilinx/SDK/2016.2/gnu/aarch32/lin/gcc-arm-linux-gnueabi/arm-linux-gnueabihf/include/c++/4.9.2/iomanip:

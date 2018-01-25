@@ -1,4 +1,5 @@
-#!/bin/env python
+#!/usr/bin/env python
+
 from rw_reg import *
 from mcs import *
 from time import *
@@ -7,7 +8,7 @@ import struct
 
 SLEEP_BETWEEN_COMMANDS=0.1
 DEBUG=False
-CTP7HOSTNAME = "eagle33"
+CTP7HOSTNAME = "eagle34"
 
 class Colors:            
     WHITE   = '\033[97m' 
@@ -45,54 +46,62 @@ ADDR_JTAG_TDI = None
 
 def main():
 
-    instructions=""
+    instructions = ""
+    ohMask = 0
+    ohList = []
 
-    if len(sys.argv) < 2:
-        print('Usage: sca.py <instructions>')
+    if len(sys.argv) < 4:
+        print('Usage: sca.py <card_name> <oh_mask> <instructions>')
         print('instructions:')
-        print('  contains r:        SCA reset will be done')
-        print('  contains h:        FPGA hard reset will be done')
-        print('  contains hh:       FPGA hard reset will be asserted and held')
-        print('  contains fpga-id:  FPGA ID will be read through JTAG')
+        print('  r:        SCA reset will be done')
+        print('  h:        FPGA hard reset will be done')
+        print('  hh:       FPGA hard reset will be asserted and held')
+        print('  fpga-id:  FPGA ID will be read through JTAG')
+        print('  sysmon:   Read FPGA sysmon data repeatedly')
+        print('  program-fpga:   Program OH FPGA with a bitfile or an MCS file. Requires a parameter "bit" or "mcs" and a filename')
         return
     else:
-        instructions = sys.argv[1]
+        ohMask = parseInt(sys.argv[2])
+        for i in range(0,12):
+            if check_bit(ohMask, i):
+                ohList.append(i)
+        instructions = sys.argv[3]
 
     parseXML()
-    if (rpc_connect(CTP7HOSTNAME)):
-        print '[Connection error] RPC connection failed'
-        exit
+    rpc_connect(sys.argv[1])
     initJtagRegAddrs()
 
     heading("Hola, I'm SCA controller tester :)")
 
-    if not checkStatus():
-        printRed('ERROR: SCA Controller is not ready..')
+    if not checkStatus(ohList):
         if not 'r' in instructions:
             exit()
 
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.LINK_ENABLE_MASK'), ohMask)
+
     if instructions == 'r':
         subheading('Reseting the SCA')
-        writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MODULE_RESET'), 0x1)
+        writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.CTRL.MODULE_RESET'), 0x1)
     elif instructions == 'hh':
         subheading('Disabling monitoring')
-        writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF'), 0x1)
+        writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF'), 0xffffffff)
         sleep(0.01)
         subheading('Asserting FPGA Hard Reset (and keeping it in reset)')
-        sendScaCommand(0x2, 0x10, 0x4, 0x0, False)
+        sendScaCommand(ohList, 0x2, 0x10, 0x4, 0x0, False)
     elif instructions == 'h':
         subheading('Issuing FPGA Hard Reset')
-        writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.FPGA_HARD_RESET'), 0x1)
+        writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.CTRL.OH_FPGA_HARD_RESET'), 0x1)
     elif instructions == 'fpga-id':
-        enableJtag()
+        enableJtag(ohMask)
 
         errors = 0
         timeStart = clock()
         for i in range(0,1):
-            value = jtagCommand(True, Virtex6Instructions.FPGA_ID, 10, 0x0, 32, True)
-            print('FPGA ID = ' + hex(value))
-            if value != VIRTEX6_FPGA_ID:
-                errors += 1
+            value = jtagCommand(True, Virtex6Instructions.FPGA_ID, 10, 0x0, 32, ohList)
+            for oh in ohList:
+                print(('OH #%d FPGA ID= ' % oh) + hex(value[oh]))
+                if value[oh] != VIRTEX6_FPGA_ID:
+                    errors += 1
         
         totalTime = clock() - timeStart
         printCyan('Num errors = ' + str(errors) + ', time took = ' + str(totalTime))
@@ -100,38 +109,35 @@ def main():
         disableJtag()
 
     elif instructions == 'sysmon':
-        #enableJtag(2)
+        enableJtag(ohMask, 2)
 
         while True:
-            enableJtag(2)
             jtagCommand(True, Virtex6Instructions.SYSMON, 10, 0x04000000, 32, False)
-            adc1 = jtagCommand(False, None, 0, 0x04010000, 32, True)
-            adc2 = jtagCommand(False, None, 0, 0x04020000, 32, True)
-            adc3 = jtagCommand(False, None, 0, 0x04030000, 32, True)
+            adc1 = jtagCommand(False, None, 0, 0x04010000, 32, ohList)
+            adc2 = jtagCommand(False, None, 0, 0x04020000, 32, ohList)
+            adc3 = jtagCommand(False, None, 0, 0x04030000, 32, ohList)
             jtagCommand(True, Virtex6Instructions.BYPASS, 10, None, 0, False)
 
-            coreTemp = ((adc1 >> 6) & 0x3FF) * 503.975 / 1024.0-273.15
-            volt1 = ((adc2 >> 6) & 0x3FF) * 3.0 / 1024.0
-            volt2 = ((adc3 >> 6) & 0x3FF) * 3.0 / 1024.0
+            for oh in ohList:
+                coreTemp = ((adc1[oh] >> 6) & 0x3FF) * 503.975 / 1024.0-273.15
+                volt1 = ((adc2[oh] >> 6) & 0x3FF) * 3.0 / 1024.0
+                volt2 = ((adc3[oh] >> 6) & 0x3FF) * 3.0 / 1024.0
 
-            #printCyan('adc1 = ' + hex(adc1) + ', adc2 = ' + hex(adc2) + ', adc3 = ' + hex(adc3))
-            printCyan('Core temp = ' + str(coreTemp) + ', voltage #1 = ' + str(volt1) + ', voltage #2 = ' + str(volt2))
+                #printCyan('adc1 = ' + hex(adc1) + ', adc2 = ' + hex(adc2) + ', adc3 = ' + hex(adc3))
+                printCyan(('=== OH #%d ===' % oh) + 'Core temp = ' + str(coreTemp) + ', voltage #1 = ' + str(volt1) + ', voltage #2 = ' + str(volt2))
 
             sleep(0.5)
-            disableJtag()
-            writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MODULE_RESET'), 0x1)
-            sleep(0.5)
 
-        #disableJtag()
+        disableJtag()
 
     elif instructions == 'program-fpga':
-        if len(sys.argv) < 4:
+        if len(sys.argv) < 5:
             print('Usage: sca.py program-fpga <file-type> <filename>')
             print('file-type can be "mcs" or "bit"')
             return
 
-        type = sys.argv[2]
-        filename = sys.argv[3]
+        type = sys.argv[3]
+        filename = sys.argv[4]
 
         if (type != "bit") and (type != "mcs"):
             print('Unrecognized type "' + type + '".. must be either "bit" or "mcs"')
@@ -188,13 +194,14 @@ def main():
         numWords = VIRTEX6_FIRMWARE_SIZE / 4
 
         timeStart = clock()
-        enableJtag(2)
+        enableJtag(ohMask, 2)
 
-        value = jtagCommand(True, Virtex6Instructions.FPGA_ID, 10, 0x0, 32, True)
+        fpgaIds = jtagCommand(True, Virtex6Instructions.FPGA_ID, 10, 0x0, 32, ohList)
         sleep(0.0001)
-        print('FPGA ID = ' + hex(value))
-        #if value != VIRTEX6_FPGA_ID:
-        #    raise ValueError("Bad FPGA-ID (should be " + hex(VIRTEX6_FPGA_ID) + ")... Hands off...")
+        for oh in ohList:
+            print('FPGA ID = ' + hex(fpgaIds[oh]))
+            #if fpgaIds[oh] != VIRTEX6_FPGA_ID:
+            #    raise ValueError("Bad FPGA-ID (should be " + hex(VIRTEX6_FPGA_ID) + ")... Hands off...")
 
         jtagCommand(False, Virtex6Instructions.SHUTDN, 10, None, 0, False)
 
@@ -407,15 +414,15 @@ def initJtagRegAddrs():
     ADDR_JTAG_LENGTH = getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.NUM_BITS').real_address
     ADDR_JTAG_TMS = getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TMS').real_address
     ADDR_JTAG_TDO = getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDO').real_address
-    ADDR_JTAG_TDI = getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI').real_address
+    #ADDR_JTAG_TDI = getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI').real_address
 
 # freqDiv -- JTAG frequency expressed as a divider of 20MHz, so e.g. a value of 2 would give 10MHz, value of 10 would give 2MHz
-def enableJtag(freqDiv=None):
+def enableJtag(ohMask, freqDiv=None):
     subheading('Disabling SCA ADC monitoring')                                                                                          
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF'), 0x1)                                                    
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF'), 0xffffffff)
     sleep(0.01)                                                                                                                         
-    subheading('Enable JTAG module')                                                                                                    
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.ENABLE'), 0x1)
+    subheading('Enable JTAG module with mask ' + hex(ohMask))
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.ENABLE_MASK'), ohMask)
     writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.SHIFT_MSB'), 0x0)
     writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.EXPERT.EXEC_ON_EVERY_TDO'), 0x0)
     writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.EXPERT.NO_SCA_LENGTH_UPDATE'), 0x0)
@@ -423,23 +430,27 @@ def enableJtag(freqDiv=None):
 
     if freqDiv is not None:
         subheading('Setting JTAG CLK frequency to ' + str(20 / (freqDiv)) + 'MHz (divider value = ' + hex((freqDiv - 1) << 24) + ')')
-        sendScaCommand(0x13, 0x90, 0x4, (freqDiv - 1) << 24, False)
+        ohList = []
+        for i in range(0,12):
+            if check_bit(ohMask, i):
+                ohList.append(i)
+        sendScaCommand(ohList, 0x13, 0x90, 0x4, (freqDiv - 1) << 24, False)
 
 
 def disableJtag():
     subheading('Disabling JTAG module')                                                                                                 
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.ENABLE'), 0x0)
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.CTRL.ENABLE_MASK'), 0x0)
 #    subheading('Enabling SCA ADC monitoring')                                                                                           
 #    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.ADC_MONITORING.MONITORING_OFF'), 0x0)                                                    
 
 
-# restoreIdle -- if True then will restore to IDLE state before doing anything else
-# ir          -- instruction register, set it to None if it's not needed to shift the instruction register
-# irLen       -- number of bits in the instruction register
-# dr          -- data register, set it to None if it's not needed to shift the data register
-# drLen       -- number of bits in the data register
-# drRead      -- read the TDI during the data register shifting
-def jtagCommand(restoreIdle, ir, irLen, dr, drLen, drRead):
+# restoreIdle  -- if True then will restore to IDLE state before doing anything else
+# ir           -- instruction register, set it to None if it's not needed to shift the instruction register
+# irLen        -- number of bits in the instruction register
+# dr           -- data register, set it to None if it's not needed to shift the data register
+# drLen        -- number of bits in the data register
+# drReadOhList -- read the TDI during the data register shifting from this list of OHs
+def jtagCommand(restoreIdle, ir, irLen, dr, drLen, drReadOhList):
     totalLen = 0
     if ir is not None:
         totalLen += irLen + 6       # instruction register length plus 6 TMS bits required to get to the IR shift state and back to IDLE
@@ -546,65 +557,77 @@ def jtagCommand(restoreIdle, ir, irLen, dr, drLen, drRead):
 
     #raw_input("Press any key to read TDI...")
 
-    if drRead:
-        debugCyan('Read TDI 0')                                                                                  
-        tdi = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI')))
+    readValues = []
+
+    if drReadOhList == False:
+        return readValues
+
+    for i in drReadOhList:
+        debugCyan('Read TDI 0')
+        tdi = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI_OH%d' % i)))
         #tdi0_fast = parseInt(rReg(parseInt(ADDR_JTAG_TDI)))
         #print('normal tdi read = ' + hex(tdi0) + ', fast C tdi read = ' + hex(tdi0_fast) + ', parsed = ' + '{0:#010x}'.format(tdi0_fast))
         debug('tdi = ' + hex(tdi))
 
         if len > 32:
-            debugCyan('Read TDI 1')                                                                                                                                          
-            tdi1 = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI')))        
+            debugCyan('Read TDI 1')
+            tdi1 = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI_OH%d' % i)))
             tdi |= tdi1 << 32
             debug('tdi1 = ' + hex(tdi1))
             debug('tdi = ' + hex(tdi))
-        
-        if len > 64:                                                                                                                                                      
-            debugCyan('Read TDI 2')                                                                                                                                       
-            tdi2 = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI')))                                                                                                             
-            tdi |= tdi2 << 64
-            debug('tdi2 = ' + hex(tdi2))                                                                                          
-            debug('tdi = ' + hex(tdi)) 
 
-        if len > 96:                                                                                                                                                      
-            debugCyan('Read TDI 3')                                                                                                                                       
-            tdi3 = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI')))                                                                                                             
+        if len > 64:
+            debugCyan('Read TDI 2')
+            tdi2 = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI_OH%d' % i)))
+            tdi |= tdi2 << 64
+            debug('tdi2 = ' + hex(tdi2))
+            debug('tdi = ' + hex(tdi))
+
+        if len > 96:
+            debugCyan('Read TDI 3')
+            tdi3 = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.JTAG.TDI_OH%d' % i)))
             tdi |= tdi3 << 96
-            debug('tdi3 = ' + hex(tdi3))                                                                                          
-            debug('tdi = ' + hex(tdi)) 
+            debug('tdi3 = ' + hex(tdi3))
+            debug('tdi = ' + hex(tdi))
 
         readValue = (tdi >> readIdx) & (0xffffffffffffffffffffffffffffffff >> (128  - drLen))
+        readValues.append(readValue)
         debug('Read pos = ' + str(readIdx))
         debug('Read = ' + hex(readValue))
-        return readValue
-    else:
-        return 0
+    return readValues
 
     
-def sendScaCommand(sca_channel, sca_command, data_length, data, doRead):
+def sendScaCommand(ohList, sca_channel, sca_command, data_length, data, doRead):
     #print('fake send: channel ' + hex(sca_channel) + ', command ' + hex(sca_command) + ', length ' + hex(data_length) + ', data ' + hex(data) + ', doRead ' + str(doRead))
     #return    
 
     d = data
 
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD_CHANNEL'), sca_channel)
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD_COMMAND'), sca_command)
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD_LENGTH'), data_length)
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD_DATA'), d)
-    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD_EXECUTE'), 0x1)
-    reply = 0
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD.SCA_CMD_CHANNEL'), sca_channel)
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD.SCA_CMD_COMMAND'), sca_command)
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD.SCA_CMD_LENGTH'), data_length)
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD.SCA_CMD_DATA'), d)
+    writeReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_CMD.SCA_CMD_EXECUTE'), 0x1)
+    reply = []
     if doRead:
-        reply = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_RPY_DATA')))
+        for i in ohList:
+            reply.append(parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.MANUAL_CONTROL.SCA_REPLY_OH%d.SCA_RPY_DATA' % i))))
     return reply
-
-def checkStatus():
-    rxReady       = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.STATUS.READY')))
-    criticalError = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.STATUS.CRITICAL_ERROR')))
-    return (rxReady == 1) and (criticalError == 0)
 
 def check_bit(byteval,idx):
     return ((byteval&(1<<idx))!=0);
+
+def checkStatus(ohList):
+    rxReady       = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.STATUS.READY')))
+    criticalError = parseInt(readReg(getNode('GEM_AMC.SLOW_CONTROL.SCA.STATUS.CRITICAL_ERROR')))
+
+    statusGood = True
+    for i in ohList:
+        if not check_bit(rxReady, i):
+            printRed("OH #%d is not ready: RX ready = %d, critical error = %d" % (i, (rxReady >> i) & 0x1, (criticalError >> i) & 0x1))
+            statusGood = False
+
+    return statusGood
 
 def debug(string):
     if DEBUG:

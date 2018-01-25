@@ -1,0 +1,146 @@
+{% block system_overview %}
+{% if monitoringOFF %}
+<span class="label label-danger full-width"> 
+<h4 align="center">
+  MONITORING OFF
+</h4>
+<button class="btn btn-success btn-lg" type="button" align="center" onclick="config_action(this.id)" id="monitoring_on" name="monitoring_on">ENABLE MONITORING</button>
+</span>
+{% else %}
+<span class="label label-success full-width"> 
+<h4 align="center">
+  MONITORING ON
+</h4>
+<button class="btn btn-danger btn-lg" type="button" align="center" onclick="config_action(this.id)" id="monitoring_off" name="monitoring_off">DISABLE MONITORING</button>
+</span>
+
+<div class="col-lg-6">
+    <!-- Left column -->
+      
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 align="center">
+	          	DAQ
+            </h4>
+            <span class="label label-default full-width"> IEMASK
+            {% for ie in iemask %}
+              <span class="label label-{{ie}}">{{ forloop.counter0 }}</span>
+            {% endfor %}
+            </span>
+            <table align="center" class="table table-bordered table-condensed" style="width:100%">
+            {% autoescape off %}
+            {% for daq in daqlist %}
+                <tr>
+                <td style="width:10%">{{daq.0}}</td>
+                {{daq.1}}
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </table>
+            <small>
+            <table align="center" class="table table-bordered table-condensed" style="width:100%">
+            {% autoescape off %}
+            {% for daqoh in daqohlist %}
+                <tr>
+                <td style="width:10%">{{daqoh.0}}</td>
+                {{daqoh.1}}
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </table>
+            </small>
+            <span class="label label-default full-width"> 
+            {% csrf_token %}
+            EXPERT CONTROLS:
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_reset" name="daq_reset">HOLD DAQ IN RESET</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_release" name="daq_release">RELEASE DAQ RESET</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_enable" name="daq_enable">ENABLE DAQ</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="daq_disable" name="daq_disable">DISABLE DAQ</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="block_l1a" name="bloc_l1a">BLOCK L1A</button>
+            <button class="btn btn-danger btn-sm" type="button" onclick="config_action(this.id)" id="unblock_l1a" name="unbloc_l1a">ENABLE L1A</button>
+            </span>
+
+        </div>
+        <!--/panel-body-->
+  
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 align="center">TTC</h4>
+            <table align="center" class="table table-bordered table-condensed" style="width:100%">
+            {% autoescape off %}
+            {% for ttc in ttclist %}
+                <tr>
+                <td style="width:10%">{{ttc.0}}</td>
+                <td>{{ttc.1}}</td>
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </table>
+        </div>
+        <!--/panel-body-->
+    </div>
+</div>
+<div class="col-lg-6">
+    <!-- Right column -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 align="center">OH</h4>
+            <small>
+            <table align="center" class="table table-bordered table-condensed" style="width:100%">
+            {% autoescape off %}
+            {% for oh in ohlist %}
+                <tr>
+                <td style="width:10%">{{oh.0}}</td>
+                {{oh.1}}
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </table>
+            </small>    
+            <span class="label label-default full-width"> 
+            {% csrf_token %}
+            EXPERT CONTROLS:
+            <button class="btn btn-success btn-sm" type="button" onclick="config_action(this.id)" id="err_counters_reset" name="err_counters_reset">RESET ERROR COUNTERS</button>
+            </span>
+
+        </div>
+        <!--/panel-body-->
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4 align="center">TRIGGER</h4>
+            <span class="label label-default full-width"> KILLMASK
+            {% for k in killmask %}
+              <span class="label label-{{k}}">{{ forloop.counter0 }}</span>
+            {% endfor %}
+            </span>
+            <table align="center" class="table table-bordered table-condensed" style="width:100%">
+            {% autoescape off %}
+            {% for trigger in triggerlist %}
+                <tr>
+                <td style="width:10%">{{trigger.0}}</td>
+                <td>{{trigger.1}}</td>
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </table>
+            <small>
+            <table align="center" class="table table-bordered table-condensed" style="width:100%">
+            {% autoescape off %}
+            {% for triggeroh in triggerohlist %}
+                <tr>
+                <td style="width:10%">{{triggeroh.0}}</td>
+                {{triggeroh.1}}
+                </tr>
+            {% endfor %}
+            {% endautoescape %}
+            </table>
+            </small>
+        </div>
+        <!--/panel-body-->
+    </div>
+</div>
+
+{%endif%}
+{% endblock %}

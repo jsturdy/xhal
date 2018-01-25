@@ -130,7 +130,7 @@ void xhal::utils::XHALXMLParser::makeTree(xercesc::DOMNode * node, std::string b
         auto generateIdxVar = getAttVal(node, "generate_idx_var");
         for (unsigned int i = 0; i < generateSize; i++)// in range(0, generateSize):
         {
-          vars.insert({*generateIdxVar,i});
+          vars[*generateIdxVar] = i;
           makeTree(node, baseName, baseAddress + generateAddressStep * i, nodes, parentNode, vars, true);
         }
         return;
@@ -232,7 +232,7 @@ unsigned int xhal::utils::XHALXMLParser::parseInt(std::string & s)
 {
   DEBUG("Call parseInt for argument " << s);
   std::stringstream converter(s);
-  unsigned int value;
+  uint32_t value;
   if (s.find("0x") != std::string::npos) {
     converter >> std::hex >> value;
     DEBUG("result " << value);
@@ -325,4 +325,7 @@ std::experimental::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNo
 
 }
 
-
+std::unordered_map<std::string,xhal::utils::Node> xhal::utils::XHALXMLParser::getAllNodes()
+{
+  return *m_nodes;
+}

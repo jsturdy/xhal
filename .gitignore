@@ -1,4 +1,5 @@
 Makefile~
+*.nfs*
 *.*~
 *.h~
 *.cpp~
@@ -6,5 +7,8 @@ Makefile~
 *.pyc
 python/*.pyc
 python/reg_interface/*.pyc
+python/daq_suite/*.pyc
+python/extras/*.pyc
+python/ctp7/*.pyc
 test/bin
 test/bin/*

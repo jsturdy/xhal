@@ -1,0 +1,34 @@
+include xcompile/apps.common.mk
+ADDFLAGS=-std=gnu++14
+
+IncludeDirs = ${XHAL_ROOT}/include
+IncludeDirs += ${XHAL_ROOT}/xcompile/xerces-c-3.1.4/src
+IncludeDirs += ${XHAL_ROOT}/xcompile/log4cplus-1.1.2/include
+INC=$(IncludeDirs:%=-I%)
+
+Libraries+= -llog4cplus -lxerces-c 
+LibraryDirs+=-L${XHAL_ROOT}/lib/arm
+LIB=$(LibraryDirs)
+LIB+= $(Libraries)
+
+LDFLAGS= -shared
+SRCS = $(shell echo src/common/utils/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
+
+TARGET_LIB=${XHAL_ROOT}/lib/arm/libxhal_ctp7.so
+
+all:${TARGET_LIB}
+
+utils:${TARGET_LIB}
+
+$(TARGET_LIB): $(OBJS) 
+	    $(CC) $(CFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) $(LIB)  -o $@ $^
+
+$(OBJS):$(SRCS)
+	    $(CC) $(CFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
+
+.PHONY: clean
+clean:
+	    -${RM} ${TARGET_LIB} ${OBJS} 
+
+

@@ -1,0 +1,12 @@
+win32debugappender.lo: win32debugappender.cxx \
+ /home/mdalchen/work/stage/usr/include/stdc-predef.h \
+ ../include/log4cplus/config.hxx ../include/log4cplus/config/defines.hxx \
+ ../include/log4cplus/helpers/thread-config.h
+
+/home/mdalchen/work/stage/usr/include/stdc-predef.h:
+
+../include/log4cplus/config.hxx:
+
+../include/log4cplus/config/defines.hxx:
+
+../include/log4cplus/helpers/thread-config.h:

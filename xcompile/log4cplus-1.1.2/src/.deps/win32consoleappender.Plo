@@ -1,0 +1,12 @@
+win32consoleappender.lo: win32consoleappender.cxx \
+ /home/mdalchen/work/stage/usr/include/stdc-predef.h \
+ ../include/log4cplus/config.hxx ../include/log4cplus/config/defines.hxx \
+ ../include/log4cplus/helpers/thread-config.h
+
+/home/mdalchen/work/stage/usr/include/stdc-predef.h:
+
+../include/log4cplus/config.hxx:
+
+../include/log4cplus/config/defines.hxx:
+
+../include/log4cplus/helpers/thread-config.h:

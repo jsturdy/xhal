@@ -14,7 +14,6 @@ using namespace std;
 
 #define DLLEXPORT extern "C"
 
-
 static memsvc_handle_t memHandle = NULL;
 bool getData(memsvc_handle_t memHandle,
              unsigned int address,
@@ -34,15 +33,11 @@ bool getData(memsvc_handle_t memHandle,
     wordsToGo -= words;
     wordsDone += words;
   }
-  //if (memsvc_read(memHandle, address, numberOfValues, (uint32_t*)&buffer) != 0) { 
-  //  return false;
-  //}
   return true;
 }
 
 DLLEXPORT unsigned long getReg(unsigned int address) {
   if (memHandle == NULL){
-    printf("memHandle NULL, open it\n");
     if(memsvc_open(&memHandle) != 0) {
       printf("Error 1: %s\t",memsvc_get_last_error(memHandle));
       return 0xfefe;
@@ -50,10 +45,6 @@ DLLEXPORT unsigned long getReg(unsigned int address) {
   }
   unsigned int buffer;
   if(getData(memHandle, address, 1, &buffer)) {
-    //if(memsvc_close(&memHandle) != 0) {
-    //  printf("Error 2: %s\t",memsvc_get_last_error(memHandle));
-    //  return 0xcafe;
-    //}
     return buffer;
   }
   else {
@@ -68,24 +59,16 @@ DLLEXPORT unsigned long getReg(unsigned int address) {
 }
 
 DLLEXPORT unsigned int putReg(unsigned int address, unsigned int value) {
-  //static memsvc_handle_t memHandle = NULL;
   if (memHandle == NULL){
     if(memsvc_open(&memHandle) != 0) {
-      //perror("Memory service connect failed");
-      //exit(1);
       return 4;
     }
   }
   unsigned int writeBuffer = value;
   if(memsvc_write(memHandle, address, 1, &writeBuffer) != 0) {
-#ifdef EMBED
     printf("Memory access failed: %s\n",memsvc_get_last_error(memHandle));
-#endif
     return 5;
   }
    
-  //if(memsvc_close(&memHandle) != 0) {
-  //  perror("Memory service close failed");
-  //}
   return 6;
 }

@@ -1,0 +1,5 @@
+*.*
+!.gitignore
+!liblmdb.so
+!liblog4cplus.so
+!libxerces-c.so

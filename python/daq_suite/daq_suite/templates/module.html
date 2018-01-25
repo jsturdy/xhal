@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% block module %}
+<h2 align="center">{{module}} module</h2>
+<table align="center" class="table table-bordered table-condensed" style="width:auto">
+<thead><tr><th>Register Name </th> <th> Register Value </th><th> Permission </th><th> Set Value </th></tr></thead>
+{% for z in ziplist %}
+<tr class={{z.2}}>
+	<td>{{z.0}}</td>
+	<td>{{z.1}}</td>
+	<td>{{z.3}}</td>
+	<td>
+		{% if 'w' in z.3 %}
+		<form class="form-inline" action="/monitoring/{{module}}/" method="post">
+		{% csrf_token %}
+		<input type="text" class="input-xs" name="{{z.0}}"/>
+		<button class="btn btn-primary btn-xs" type="submit" id="{{z.0}}" name="update" value="{{z.0}}">Set</button>
+		</form>
+		{% endif %}
+	</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

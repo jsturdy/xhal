@@ -1,9 +1,10 @@
 import xml.etree.ElementTree as xml
 import sys, os, subprocess
+from time import sleep
 #import uhal
 from ctypes import *
 
-lib = CDLL(os.getenv("XHAL_ROOT")+"/lib/librwreg.so")
+lib = CDLL(os.getenv("XHAL_ROOT")+"/lib/x86_64/librwreg.so")
 rReg = lib.getReg
 rReg.restype = c_uint
 rReg.argtypes=[c_uint]
@@ -12,10 +13,42 @@ wReg.argtypes=[c_uint,c_uint]
 rpc_connect = lib.init
 rpc_connect.argtypes = [c_char_p]
 rpc_connect.restype = c_uint
+rBlock = lib.getBlock
+rBlock.restype = c_uint
+rBlock.argtypes=[c_uint,POINTER(c_uint32)]
+getRPCTTCmain = lib.getmonTTCmain
+getRPCTTCmain.argtypes = [POINTER(c_uint32)]
+getRPCTTCmain.restype = c_uint
+
+getRPCTRIGGERmain = lib.getmonTRIGGERmain
+getRPCTRIGGERmain.argtypes = [POINTER(c_uint32), c_uint32]
+getRPCTRIGGERmain.restype = c_uint
+
+getRPCTRIGGEROHmain = lib.getmonTRIGGEROHmain
+getRPCTRIGGEROHmain.argtypes = [POINTER(c_uint32), c_uint32]
+getRPCTRIGGEROHmain.restype = c_uint
+
+getRPCDAQmain = lib.getmonDAQmain
+getRPCDAQmain.argtypes = [POINTER(c_uint32)]
+getRPCDAQmain.restype = c_uint
+
+getRPCDAQOHmain = lib.getmonDAQOHmain
+getRPCDAQOHmain.argtypes = [POINTER(c_uint32), c_uint32]
+getRPCDAQOHmain.restype = c_uint
+
+getRPCOHmain = lib.getmonOHmain
+getRPCOHmain.argtypes = [POINTER(c_uint32), c_uint32]
+getRPCOHmain.restype = c_uint
+
+rList = lib.getList
+rList.restype = c_uint
+rList.argtypes=[POINTER(c_uint32),POINTER(c_uint32)]
+
 
 DEBUG = True
 ADDRESS_TABLE_TOP = os.getenv("XHAL_ROOT")+'/etc/gem_amc_top.xml'
-nodes = []
+nodes = {}
+#nodes = []
 
 class Node:
     name = ''
@@ -45,7 +78,7 @@ class Node:
         print 'Description:',self.description
         print 'Address:','{0:#010x}'.format(self.address)
         print 'Permission:',self.permission
-        print 'Mask:','{0:#010x}'.format(self.mask)
+        if self.mask is not None: print 'Mask:','{0:#010x}'.format(self.mask)
         print 'Module:',self.isModule
         print 'Parent:',self.parent.name
 
@@ -114,7 +147,8 @@ def makeTree(node,baseName,baseAddress,nodes,parentNode,vars,isGenerated):
         newNode.warn_min_value = node.get('sw_monitor_warn_min_threshold') 
     if node.get('sw_monitor_error_min_threshold') is not None:
         newNode.error_min_value = node.get('sw_monitor_error_min_threshold') 
-    nodes.append(newNode)
+    #nodes.append(newNode)
+    nodes[name] = newNode
     if parentNode is not None:
         parentNode.addChild(newNode)
         newNode.parent = parentNode
@@ -132,20 +166,31 @@ def getAllChildren(node,kids=[]):
             getAllChildren(child,kids)
 
 def getNode(nodeName):
-    return next((node for node in nodes if node.name == nodeName),None)
+    #return next((node for node in nodes if node.name == nodeName),None)
+    try: 
+        return nodes[nodeName]
+    except KeyError:
+        print "Node %s not found" %(nodeName)
+        return None
 
 def getNodeFromAddress(nodeAddress):
-    return next((node for node in nodes if node.real_address == nodeAddress),None)
+    return next((node for node in nodes.values() if node.real_address == nodeAddress),None)
+    #return next((node for node in nodes if node.real_address == nodeAddress),None)
 
 def getNodesContaining(nodeString):
-    nodelist = [node for node in nodes if nodeString in node.name]
-    if len(nodelist): return nodelist
+    #nodelist = [node for node in nodes if nodeString in node.name]
+    nodelist = [nodes[key] for key in nodes if nodeString in key]
+    if len(nodelist): 
+        nodelist.sort()
+        return nodelist
     else: return None
 
 #returns *readable* registers
 def getRegsContaining(nodeString):
-    nodelist = [node for node in nodes if nodeString in node.name and node.permission is not None and 'r' in node.permission]
-    if len(nodelist): return nodelist
+    nodelist = [node for node in nodes.values if nodeString in node.name and node.permission is not None and 'r' in node.permission]
+    if len(nodelist):
+        nodelist.sort()
+        return nodelist
     else: return None
 
 
@@ -179,7 +224,8 @@ def readReg(reg):
         return 'No read permission!'
     value = rReg(parseInt(address))
     if parseInt(value) == 0xdeaddead:
-        return 'Bus Error'
+        #return 'Bus Error'
+        return '{0:#010x}'.format(0xdeaddead)
     if reg.mask is not None:
         shift_amount=0
         for bit in reversed('{0:b}'.format(reg.mask)):
@@ -214,18 +260,32 @@ def writeReg(reg, value):
     if 'w' not in reg.permission:
         return 'No write permission!'
     # Apply Mask if applicable
+    print "Initial value to write: %s, register %s"% (value,reg.name)
     if reg.mask is not None:
         shift_amount=0
         for bit in reversed('{0:b}'.format(reg.mask)):
             if bit=='0': shift_amount+=1
             else: break
         shifted_value = value << shift_amount
-        initial_value = readAddress(address)
-        try: initial_value = parseInt(initial_value) 
-        except ValueError: return 'Error reading initial value: '+str(initial_value)
+        for i in range(10):
+            initial_value = readAddress(address)
+            try: initial_value = parseInt(initial_value) 
+            except ValueError: return 'Error reading initial value: '+str(initial_value)
+            if initial_value == 0xdeaddead:
+                print "Writing masked reg %s : Error while reading, retry attempt (%s)"%(reg.name,i)
+                sleep(0.1)
+                continue
+            else: break
+        if initial_value == 0xdeaddead:
+             print "Writing masked reg %s failed. Exiting..." %(reg.name)
+             #sys.exit()
         final_value = (shifted_value & reg.mask) | (initial_value & ~reg.mask)
     else: final_value = value
     output = wReg(parseInt(address),parseInt(final_value))
+    if output != final_value:
+        print "Writing masked reg %s failed. Exiting..." %(reg.name)
+        print "wReg output %s" % (output)
+        #sys.exit()
     return str('{0:#010x}'.format(final_value)).rstrip('L')+'('+str(value)+')\twritten to '+reg.name
     
 def isValid(address):
@@ -239,7 +299,7 @@ def completeReg(string):
     completions = []
     currentLevel = len([c for c in string if c=='.'])
   
-    possibleNodes = [node for node in nodes if node.name.startswith(string) and node.level == currentLevel]
+    possibleNodes = [node for node in nodes.values() if node.name.startswith(string) and node.level == currentLevel]
     if len(possibleNodes)==1:
         if possibleNodes[0].children == []: return [possibleNodes[0].name]
         for n in possibleNodes[0].children:
