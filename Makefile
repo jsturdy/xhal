@@ -6,6 +6,7 @@ SUBPACKAGES := \
 SUBPACKAGES.CLEAN    := $(patsubst %,%.clean,    $(SUBPACKAGES))
 SUBPACKAGES.DEBUG    := $(patsubst %,%.debug,    $(SUBPACKAGES))
 SUBPACKAGES.INSTALL  := $(patsubst %,%.install,  $(SUBPACKAGES))
+SUBPACKAGES.RELEASE  := $(patsubst %,%.release,  $(SUBPACKAGES))
 SUBPACKAGES.UNINSTALL:= $(patsubst %,%.uninstall,$(SUBPACKAGES))
 SUBPACKAGES.RPM      := $(patsubst %,%.rpm,      $(SUBPACKAGES))
 SUBPACKAGES.CLEANRPM := $(patsubst %,%.cleanrpm, $(SUBPACKAGES))
@@ -16,17 +17,20 @@ SUBPACKAGES.CLEANDOC := $(patsubst %,%.cleandoc, $(SUBPACKAGES))
 	$(SUBPACKAGES.CLEAN) \
 	$(SUBPACKAGES.INSTALL) \
 	$(SUBPACKAGES.UNINSTALL) \
+	$(SUBPACKAGES.RELEASE) \
 	$(SUBPACKAGES.RPM) \
 	$(SUBPACKAGES.CLEANRPM) \
 	$(SUBPACKAGES.DOC) \
 	$(SUBPACKAGES.CLEANDOC)
 
-.PHONY: all build clean cleanall cleandoc cleanrpm
+.PHONY: all build doc install uninstall rpm release
+.PHONY: clean cleanall cleandoc cleanrpm cleanrelease
 build: $(SUBPACKAGES)
 
 all: $(SUBPACKAGES) $(SUBPACKAGES.DOC)
 
 doc: $(SUBPACKAGES.DOC)
+# copy generated docs to common location?
 
 rpm: $(SUBPACKAGES) $(SUBPACKAGES.RPM)
 
@@ -35,12 +39,19 @@ clean: $(SUBPACKAGES.CLEAN)
 cleanrpm: $(SUBPACKAGES.CLEANRPM)
 
 cleandoc: $(SUBPACKAGES.CLEANDOC)
+# remove generated common docs
 
 install: $(SUBPACKAGES) $(SUBPACKAGES.INSTALL)
 
 uninstall: $(SUBPACKAGES.UNINSTALL)
 
-cleanall: clean cleandoc cleanrpm
+release: $(SUBPACKAGES.RELEASE)
+# put generated files into release tree
+
+cleanrelease:
+	rm -rf repos
+
+cleanall: clean cleandoc cleanrpm cleanrelease
 
 $(SUBPACKAGES):
 	$(MAKE) -C $@
@@ -65,6 +76,9 @@ $(SUBPACKAGES.INSTALL): $(SUBPACKAGES)
 
 $(SUBPACKAGES.UNINSTALL): $(SUBPACKAGES)
 	$(MAKE) -C $(patsubst %.uninstall,%, $@) uninstall
+
+$(SUBPACKAGES.RELEASE): $(SUBPACKAGES)
+	$(MAKE) -C $(patsubst %.release,%, $@) release
 
 python:
 

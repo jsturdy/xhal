@@ -4,6 +4,7 @@ SUBPACKAGES := \
 SUBPACKAGES.CLEAN    := $(patsubst %,%.clean,    $(SUBPACKAGES))
 SUBPACKAGES.DEBUG    := $(patsubst %,%.debug,    $(SUBPACKAGES))
 SUBPACKAGES.INSTALL  := $(patsubst %,%.install,  $(SUBPACKAGES))
+SUBPACKAGES.RELEASE  := $(patsubst %,%.release,  $(SUBPACKAGES))
 SUBPACKAGES.UNINSTALL:= $(patsubst %,%.uninstall,$(SUBPACKAGES))
 SUBPACKAGES.RPM      := $(patsubst %,%.rpm,      $(SUBPACKAGES))
 SUBPACKAGES.CLEANRPM := $(patsubst %,%.cleanrpm, $(SUBPACKAGES))
@@ -14,12 +15,14 @@ SUBPACKAGES.CLEANDOC := $(patsubst %,%.cleandoc, $(SUBPACKAGES))
 	$(SUBPACKAGES.CLEAN) \
 	$(SUBPACKAGES.INSTALL) \
 	$(SUBPACKAGES.UNINSTALL) \
+	$(SUBPACKAGES.RELEASE) \
 	$(SUBPACKAGES.RPM) \
 	$(SUBPACKAGES.CLEANRPM) \
 	$(SUBPACKAGES.DOC) \
 	$(SUBPACKAGES.CLEANDOC)
 
-.PHONY: all build clean cleanall cleandoc cleanrpm doc install uninstall rpm
+.PHONY: all build doc install uninstall rpm release
+.PHONY: clean cleanall cleandoc cleanrpm
 build: $(SUBPACKAGES)
 
 all: $(SUBPACKAGES) $(SUBPACKAGES.DOC)
@@ -37,6 +40,8 @@ cleanrpm: $(SUBPACKAGES.CLEANRPM)
 install: $(SUBPACKAGES.INSTALL)
 
 uninstall: $(SUBPACKAGES.UNINSTALL)
+
+release: $(SUBPACKAGES.RELEASE)
 
 cleanall: clean cleandoc cleanrpm
 
@@ -63,3 +68,6 @@ $(SUBPACKAGES.INSTALL):
 
 $(SUBPACKAGES.UNINSTALL):
 	$(MAKE) -C $(patsubst %.uninstall,%, $@) uninstall-site
+
+$(SUBPACKAGES.RELEASE): $(SUBPACKAGES)
+	$(MAKE) -C $(patsubst %.release,%, $@) release

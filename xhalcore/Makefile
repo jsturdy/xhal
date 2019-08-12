@@ -17,6 +17,7 @@ include $(ConfigDir)/mfPythonDefs.mk
 include $(ConfigDir)/mfRPMRules.mk
 
 PackageSourceDir:=$(PackagePath)/src/common
+PackageObjectDir:=$(PackagePath)/src/linux/$(Arch)
 
 XHAL_VER_MAJOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
 XHAL_VER_MINOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
@@ -66,25 +67,35 @@ df = $(PackageObjectDir)/$(*F)
 
 .PHONY: xhal rpc
 
+## @xhalcore Compile all target libraries
+build: $(TargetLibraries)
+
+all: build
+
 default: build
 	@echo "Running default target"
 	$(MakeDir) $(PackageDir)
 
-rpmprep: default
+## @xhalcore Prepare the package for building the RPM
+rpmprep: build
 	@echo "Running preprpm target"
 	$(MakeDir) lib/arm
 	$(MakeDir) $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/xhalarm/lib/*.so lib/arm
-	@cp -rfp lib include src Makefile $(PackageDir)/$(Package)
+	@cp -rfp lib include Makefile $(PackageDir)/$(Package)
+	@cp -rfp --parents src/common $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/config $(PackageDir)
 	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
 	cd $(PackageDir)/..; \
-	tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION).tbz2 $(PackageName);
+	    tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION)-$(PACKAGE_NOARCH_RELEASE).tbz2 $(PackageName);
 
+## @xhalcore Compile the xhal RPC manager library
 rpc: xhal $(RPCMAN_LIB)
 
+## @xhalcore Compile the xhal library
 xhal: $(XHAL_LIB)
 
+## @xhalcore Compile the xhal python bindings
 xhalpy: xhal rpc $(XHALPY_LIB)
 
 doc:
@@ -119,9 +130,6 @@ $(XHALPY_LIB): $(OBJS_XHALPY)
 $(RPCMAN_LIB): $(OBJS_RPCMAN)
 	$(MakeDir) -p $(@D)
 	$(CXX) $(ADDFLAGS) $(LDFLAGS) -shared -Wl,-soname,$(@F) -o $@ $^ $(Libraries)
-
-## xhalcore Compile $(TargetLibraries)
-build: $(TargetLibraries)
 
 clean:
 	-rm -rf $(OBJS_UTILS) $(OBJS_XHAL) $(OBJS_RPCMAN) $(OBJS_XHALPY)

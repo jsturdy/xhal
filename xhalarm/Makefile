@@ -18,6 +18,7 @@ include $(ConfigDir)/mfRPMRules.mk
 
 PackageSourceDir:=$(ProjectPath)/xhalcore/src/common
 PackageIncludeDir:=$(ProjectPath)/xhalcore/include
+PackageObjectDir:=$(PackagePath)/src/linux/$(Arch)
 
 XHAL_VER_MAJOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
 XHAL_VER_MINOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
@@ -46,25 +47,25 @@ TargetLibraries:= xhal
 # destination path macro we'll use below
 df = $(PackageObjectDir)/$(*F)
 
-default: build
-	@echo "Running default target"
-#	@cp -rfp $(ProjectPath)/xhalcore/src/common $(PackagePath)/src/
-	$(MakeDir) $(PackageDir)
-
-rpmprep: default
-	@echo "Running preprpm target"
-	$(MakeDir) $(PackageDir)/$(Package)
-	@cp -rfp lib include src Makefile $(PackageDir)/$(Package)
-	@cp -rfp $(ProjectPath)/config $(PackageDir)
-	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
-	cd $(PackageDir)/..; \
-	ls -l; \
-	tar cjf $(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION).tbz2 $(PackageName); \
-	ls -l; \
-	mv $(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION).tbz2 $(RPMBUILD_DIR)/SOURCES;
+## @xhalarm Compile all target libraries
+build: $(TargetLibraries)
 
 all: build
 
+default: build
+
+## @xhalarm Prepare the package for building the RPM
+rpmprep: build
+	@echo "Running preprpm target"
+	$(MakeDir) $(PackageDir)/$(Package)
+	@cp -rfp lib include Makefile $(PackageDir)/$(Package)
+	@cp -rfp $(ProjectPath)/config $(PackageDir)
+	cd $(ProjectPath); cp -rfp --parents xhalcore/{include,src/common} $(PackagePath)/$(PackageDir)
+	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
+	cd $(PackageDir)/..; \
+	    tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION)-$(PACKAGE_NOARCH_RELEASE).tbz2 $(PackageName);
+
+## @xhalarm Compile the xhal library
 xhal: $(XHAL_LIB)
 
 doc:
@@ -97,8 +98,6 @@ $(XHAL_LIB): $(OBJS_XHAL)
 # 	$(CC) -std=gnu99 -c $(CFLAGS) -o $@ $<
 # %.o: %.cc
 # 	$(CXX) -std=c++0x -c $(CFLAGS) -o $@ $<
-
-build: $(TargetLibraries)
 
 clean:
 	-rm -rf $(OBJS_XHAL)
