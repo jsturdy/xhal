@@ -30,7 +30,12 @@ build: $(SUBPACKAGES)
 all: $(SUBPACKAGES) $(SUBPACKAGES.DOC)
 
 doc: $(SUBPACKAGES.DOC)
-# copy generated docs to common location?
+	@echo "Generating project doxygen"
+	@echo "TO DO"
+#	@mkdir ./doc/build
+#	@rm -fr ./doc/build/* 2> /dev/null
+#	@doxygen -s ./doc/doxygen_conf
+# copy generated docs to common location for release?
 
 rpm: $(SUBPACKAGES) $(SUBPACKAGES.RPM)
 

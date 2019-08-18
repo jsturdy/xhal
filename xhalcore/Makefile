@@ -36,7 +36,7 @@ LibraryDirs+=-L$(XDAQ_ROOT)/lib
 LibraryDirs+=-L$(PackageLibraryDir)
 LibraryDirs+=-L/opt/wiscrpcsvc/lib
 
-LDFLAGS = -shared $(LibraryDirs)
+LDFLAGS+= -shared $(LibraryDirs)
 
 SRCS_XHAL   = $(wildcard $(PackageSourceDir)/*.cpp)
 SRCS_UTILS  = $(wildcard $(PackageSourceDir)/utils/*.cpp)
@@ -77,17 +77,19 @@ default: build
 	$(MakeDir) $(PackageDir)
 
 ## @xhalcore Prepare the package for building the RPM
-rpmprep: build
+rpmprep: build doc
 	@echo "Running preprpm target"
 	$(MakeDir) lib/arm
 	$(MakeDir) $(PackageDir)/$(Package)
-	@cp -rfp $(ProjectPath)/xhalarm/lib/*.so lib/arm
+	@cp -rfp $(ProjectPath)/xhalarm/lib/* lib/arm
 	@cp -rfp lib include Makefile $(PackageDir)/$(Package)
-	@cp -rfp --parents src/common $(PackageDir)/$(Package)
+	@cp -rfp src $(PackageDir)/$(Package)
+#	@cp -rfp --parents src/common $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/config $(PackageDir)
 	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
 	cd $(PackageDir)/..; \
 	    tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION)-$(PACKAGE_NOARCH_RELEASE).tbz2 $(PackageName);
+	$(RM) $(PackageDir)/$(Package)
 
 ## @xhalcore Compile the xhal RPC manager library
 rpc: xhal $(RPCMAN_LIB)
@@ -121,24 +123,27 @@ $(TargetLibraries):
 
 $(XHAL_LIB): $(OBJS_XHAL) $(OBJS_UTILS)
 	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -shared -Wl,-soname,$(@F) -o $@ $^ $(Libraries)
+	$(CXX) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
+	$(link-sonames)
 
 $(XHALPY_LIB): $(OBJS_XHALPY)
 	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -L$(PYTHON_LIB_PREFIX) -shared -Wl,-soname,$(@F) -o $@ $^ $(Libraries) -lboost_python -l$(PYTHON_LIB) -lxhal -lrpcman
+	$(CXX) $(ADDFLAGS) $(LDFLAGS) -L$(PYTHON_LIB_PREFIX) -o $(@D)/$(LibraryFull) $^ $(Libraries) -lboost_python -l$(PYTHON_LIB) -lxhal -lrpcman
+	$(link-sonames)
 
 $(RPCMAN_LIB): $(OBJS_RPCMAN)
 	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -shared -Wl,-soname,$(@F) -o $@ $^ $(Libraries)
+	$(CXX) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
+	$(link-sonames)
 
 clean:
-	-rm -rf $(OBJS_UTILS) $(OBJS_XHAL) $(OBJS_RPCMAN) $(OBJS_XHALPY)
-	-rm -rf $(PackageLibraryDir)
-	-rm -rf $(PackageExecDir)
-	-rm -rf $(PackageDir)
+	$(RM) $(OBJS_UTILS) $(OBJS_XHAL) $(OBJS_RPCMAN) $(OBJS_XHALPY)
+	$(RM) $(PackageLibraryDir)
+	$(RM) $(PackageExecDir)
+	$(RM) $(PackageDir)
 
 cleandoc: 
 	@echo "TO DO"
 
 cleanall:
-	-rm -rf $(PackageObjectDir)
+	$(RM) $(PackageObjectDir)

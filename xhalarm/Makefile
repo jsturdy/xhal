@@ -58,9 +58,10 @@ default: build
 rpmprep: build
 	@echo "Running preprpm target"
 	$(MakeDir) $(PackageDir)/$(Package)
-	@cp -rfp lib include Makefile $(PackageDir)/$(Package)
+	@cp -rfp lib include src Makefile $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/config $(PackageDir)
-	cd $(ProjectPath); cp -rfp --parents xhalcore/{include,src/common} $(PackagePath)/$(PackageDir)
+	cd $(ProjectPath); cp -rfp xhalcore/{include,src} $(PackagePath)/$(PackageDir)
+#	cd $(ProjectPath); cp -rfp --parents xhalcore/{include,src/common} $(PackagePath)/$(PackageDir)
 	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
 	cd $(PackageDir)/..; \
 	    tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION)-$(PACKAGE_NOARCH_RELEASE).tbz2 $(PackageName);
@@ -91,7 +92,8 @@ $(TargetLibraries):
 
 $(XHAL_LIB): $(OBJS_XHAL) 
 	$(MakeDir) -p $(@D)
-	$(CC) $(ADDFLAGS) $(LDFLAGS) -shared -Wl,-soname,$(@F) -o $@ $^ $(Libraries)
+	$(CC) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
+	$(link-sonames)
 
 ## FIXME obsolete? only for xcompiled things?
 # %.o: %.c
@@ -100,13 +102,13 @@ $(XHAL_LIB): $(OBJS_XHAL)
 # 	$(CXX) -std=c++0x -c $(CFLAGS) -o $@ $<
 
 clean:
-	-rm -rf $(OBJS_XHAL)
-	-rm -rf $(PackageLibraryDir)
-	-rm -rf $(PackageExecDir)
-	-rm -rf $(PackageDir)
+	$(RM) $(OBJS_XHAL)
+	$(RM) $(PackageLibraryDir)
+	$(RM) $(PackageExecDir)
+	$(RM) $(PackageDir)
 
 cleandoc: 
 	@echo "TO DO"
 
 cleanall:
-	-rm -rf $(PackageObjectDir)
+	$(RM) $(PackageObjectDir)
