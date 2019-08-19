@@ -54,7 +54,7 @@ release: $(SUBPACKAGES.RELEASE)
 # put generated files into release tree
 
 cleanrelease:
-	rm -rf repos
+	-rm -rf release
 
 cleanall: clean cleandoc cleanrpm cleanrelease
 

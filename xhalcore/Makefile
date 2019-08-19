@@ -14,10 +14,10 @@ ConfigDir  := $(ProjectPath)/config
 
 include $(ConfigDir)/mfCommonDefs.mk
 include $(ConfigDir)/mfPythonDefs.mk
-include $(ConfigDir)/mfRPMRules.mk
 
 PackageSourceDir:=$(PackagePath)/src/common
 PackageObjectDir:=$(PackagePath)/src/linux/$(Arch)
+PackageDocsDir:=$(PackagePath)/doc/_build/html
 
 XHAL_VER_MAJOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
 XHAL_VER_MINOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
@@ -62,6 +62,8 @@ RPCMAN_LIB = $(PackageLibraryDir)/librpcman.so
 
 TargetLibraries:= xhal xhalpy rpcman
 
+include $(ConfigDir)/mfRPMRules.mk
+
 # destination path macro we'll use below
 df = $(PackageObjectDir)/$(*F)
 
@@ -73,12 +75,14 @@ build: $(TargetLibraries)
 all: build
 
 default: build
-	@echo "Running default target"
 	$(MakeDir) $(PackageDir)
 
 ## @xhalcore Prepare the package for building the RPM
 rpmprep: build doc
-	@echo "Running preprpm target"
+
+# Define as dependency everything that should cause a rebuild
+$(PackageSourceTarball): $(XHAL_LIB) $(XHALPY_LIB) $(RPCMAN_LIB) Makefile $(ProjectPath)/xhalarm/lib/libxhal*
+	$(MakeDir) $(RPM_DIR)
 	$(MakeDir) lib/arm
 	$(MakeDir) $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/xhalarm/lib/* lib/arm
@@ -86,9 +90,8 @@ rpmprep: build doc
 	@cp -rfp src $(PackageDir)/$(Package)
 #	@cp -rfp --parents src/common $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/config $(PackageDir)
-	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
 	cd $(PackageDir)/..; \
-	    tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION)-$(PACKAGE_NOARCH_RELEASE).tbz2 $(PackageName);
+	    tar cjf $(PackageSourceTarball) $(PackageName);
 	$(RM) $(PackageDir)/$(Package)
 
 ## @xhalcore Compile the xhal RPC manager library
@@ -105,7 +108,7 @@ doc:
 
 ## adapted from http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 ## Generic object creation rule, generate dependencies and use them later
-$(PackageObjectDir)/%.o: $(PackageSourceDir)/%.cpp
+$(PackageObjectDir)/%.o: $(PackageSourceDir)/%.cpp Makefile
 	$(MakeDir) $(@D)
 	$(CXX) $(CCFLAGS) $(ADDFLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(@D)/$(*F).Td -o $@ $<
 	mv $(@D)/$(*F).Td $(@D)/$(*F).d
@@ -126,14 +129,14 @@ $(XHAL_LIB): $(OBJS_XHAL) $(OBJS_UTILS)
 	$(CXX) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
 	$(link-sonames)
 
-$(XHALPY_LIB): $(OBJS_XHALPY)
-	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -L$(PYTHON_LIB_PREFIX) -o $(@D)/$(LibraryFull) $^ $(Libraries) -lboost_python -l$(PYTHON_LIB) -lxhal -lrpcman
-	$(link-sonames)
-
 $(RPCMAN_LIB): $(OBJS_RPCMAN)
 	$(MakeDir) -p $(@D)
 	$(CXX) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
+	$(link-sonames)
+
+$(XHALPY_LIB): $(OBJS_XHALPY) $(XHAL_LIB) $(RPCMAN_LIB)
+	$(MakeDir) -p $(@D)
+	$(CXX) $(ADDFLAGS) $(LDFLAGS) -L$(PYTHON_LIB_PREFIX) -o $(@D)/$(LibraryFull) $^ $(Libraries) -lboost_python -l$(PYTHON_LIB) -lxhal -lrpcman
 	$(link-sonames)
 
 clean:

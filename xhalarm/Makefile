@@ -14,7 +14,6 @@ ConfigDir  := $(ProjectPath)/config
 
 include $(ConfigDir)/mfCommonDefs.mk
 include $(ConfigDir)/mfZynq.mk
-include $(ConfigDir)/mfRPMRules.mk
 
 PackageSourceDir:=$(ProjectPath)/xhalcore/src/common
 PackageIncludeDir:=$(ProjectPath)/xhalcore/include
@@ -44,6 +43,8 @@ XHAL_LIB = $(PackageLibraryDir)/libxhal.so
 
 TargetLibraries:= xhal
 
+include $(ConfigDir)/mfRPMRules.mk
+
 # destination path macro we'll use below
 df = $(PackageObjectDir)/$(*F)
 
@@ -55,16 +56,19 @@ all: build
 default: build
 
 ## @xhalarm Prepare the package for building the RPM
-rpmprep: build
-	@echo "Running preprpm target"
+## @xhalcore Prepare the package for building the RPM
+rpmprep: build doc
+
+$(PackageSourceTarball): $(XHAL_LIB) Makefile
+	$(MakeDir) $(RPM_DIR)
 	$(MakeDir) $(PackageDir)/$(Package)
 	@cp -rfp lib include src Makefile $(PackageDir)/$(Package)
 	@cp -rfp $(ProjectPath)/config $(PackageDir)
 	cd $(ProjectPath); cp -rfp xhalcore/{include,src} $(PackagePath)/$(PackageDir)
 #	cd $(ProjectPath); cp -rfp --parents xhalcore/{include,src/common} $(PackagePath)/$(PackageDir)
-	$(MakeDir) $(RPMBUILD_DIR)/SOURCES
 	cd $(PackageDir)/..; \
-	    tar cjf $(RPMBUILD_DIR)/SOURCES/$(Project)-$(LongPackage)-$(PACKAGE_FULL_VERSION)-$(PACKAGE_NOARCH_RELEASE).tbz2 $(PackageName);
+	    tar cjf $(PackageSourceTarball) $(PackageName);
+	$(RM) $(PackageDir)/$(Package)
 
 ## @xhalarm Compile the xhal library
 xhal: $(XHAL_LIB)
@@ -74,7 +78,7 @@ doc:
 
 ## adapted from http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
 ## Generic object creation rule, generate dependencies and use them later
-$(PackageObjectDir)/%.o: $(PackageSourceDir)/%.cpp
+$(PackageObjectDir)/%.o: $(PackageSourceDir)/%.cpp Makefile
 	$(MakeDir) $(@D)
 	$(CC) $(CFLAGS) $(ADDFLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(@D)/$(*F).Td -o $@ $<
 	mv $(@D)/$(*F).Td $(@D)/$(*F).d
