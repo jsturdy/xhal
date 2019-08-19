@@ -15,8 +15,10 @@
 ## ------------------- used secure variables: ------------------- ##
   # EOS_ACCOUNT_USERNAME: Username of  to write in the EOS folder whose path is EOS_PATH
   # EOS_ACCOUNT_PASSWORD: Account password
-  # KRB_PASSWORD
-  # KRB_USERNAME
+  # KRB_PASSWORD base64 hased value
+  # KRB_USERNAME base64 hased value
+  # GPG_SIGNING_KEY_PRIV base64 hased value
+  # GPG_PASSPHRASE base64 hased value
   # CI_DEPLOY_USER
   # CI_DEPLOY_PASSWORD
 
@@ -31,7 +33,7 @@ stages:
 
 ## ------------------- Define up anchors for various tasks, shared across all jobs utilizing them ------------------- ##
 .common_variables: &common_variables
-  EOS_SITE_URL:           http://cmsgemdaq.cern.ch
+  EOS_SITE_URL:           https://cmsgemdaq.cern.ch/cmsgemdaq
   BUILD_HOME:             /builds/${CI_PROJECT_NAMESPACE}
   XDAQ_OS:                linux
   XDAQ_ROOT:              /opt/xdaq
@@ -59,15 +61,12 @@ variables: *common_variables
   # image: gitlab-registry.cern.ch/cms-gem-daq-project/gemdaq_ci_worker/extrapy/devtoolsroot:cc8:python3
 
 ### ------------------- Shared setup between stages ------------------- ###
-.common_setup: &common_setup
-  - mkdir -p ${ARTIFACTS_DIR}
-  ## need to pull in all dependencies, based on some requirements, preferably the spec file?
-  ## cache this stuff between builds?
-  ## should be in the Docker image
-  - |
-    pip install -I --user "pip" "importlib" "codecov" "setuptools<38.2"
-    sudo yum install -y wiscrpcsvc\* --enablerepo=gemos*
-    sudo yum install -y reedmuller\* --enablerepo=gemos*
+.common_setup: &common_setup |-
+  mkdir -p ${ARTIFACTS_DIR}
+  pip install -I --user "pip" "importlib" "codecov" "setuptools<38.2"
+  sudo yum install -y wiscrpcsvc\* --enablerepo=gemos*
+  sudo yum install -y reedmuller\* --enablerepo=gemos*
+  source /data/bigdisk/sw/Xilinx/SDK/2016.2/settings64.sh
 
 .retry_settings: &retry_settings
   retry:
@@ -75,7 +74,7 @@ variables: *common_variables
     when:
       - runner_system_failure
       - stuck_or_timeout_failure
-      
+
 .common_cache: &common_cache
   # key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
   # key: "$BUILD_ARCH"
@@ -88,7 +87,7 @@ variables: *common_variables
     # - /opt/rwreg
     # - /opt/wiscrpcsvc
     # - /opt/xhal
-  
+
 .common_artifacts: &common_artifacts
   name: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
   expire_in: 1d
@@ -102,16 +101,19 @@ variables: *common_variables
   # paths:
   #   - ${ARTIFACTS_DIR}
 
+.touch_compile_artifacts: &touch_compile_artifacts |-
+  find ./ -type f -name '*.d' -print0 -exec touch {} \;
+  find ./ -type f -name '*.o' -print0 -exec touch {} \;
+  find ./ -type f -name 'lib*' -print0 -exec touch {} \;
+  find ./ -type f -name 'xhalpy*' -print0 -exec touch {} \;
+  # find ./python/reg_interface_gem/pkg/xhal -type f -print0 -exec touch {} \;
+
 .before_compile: &before_compile
-  - mkdir -p ${ARTIFACTS_DIR}
   ## these are set in the Dockerfile, but don't work in the gitlab CI by default?
   - export BUILD_HOME=/builds/$CI_PROJECT_NAMESPACE
   - export ARTIFACTS_DIR=$BUILD_HOME/artifacts
-  ## need to pull in all cmsgemos dependencies, based on some requirements, preferably the spec file?
-  ## cache this stuff between builds?
-  ## set up Xilinx peta/Zynq compiler
-  - source /data/bigdisk/sw/Xilinx/SDK/2016.2/settings64.sh
- 
+  - *common_setup
+
 .compile_common: &compile_common
   only:
     - /^issue.*$/
@@ -149,7 +151,7 @@ compile:cc7:
 #   environment:
 #   variables:
 #   cache:
-    
+
 ##### ------------------- Generate docs ------------------- #####
 .docs_artifacts: &docs_artifacts
   untracked: true
@@ -157,6 +159,11 @@ compile:cc7:
   # paths:
   #   - ${ARTIFACTS_DIR}
   #   - doc/build/html
+
+.touch_docs_artifacts: &touch_docs_artifacts |-
+  find ./python/reg_interface_gem/doc/_build -type f -print0 -exec touch {} \;
+  # find ./doc/html -type f -print0 -exec touch {} \;
+  # find ./doc/latex -type f -print0 -exec touch {} \;
 
 # generate docs
 docs:
@@ -192,7 +199,7 @@ docs:
   - |
     sudo yum install -y wiscrpcsvc\* --enablerepo=gemos*
     sudo yum install -y reedmuller\* --enablerepo=gemos*
-  
+
 # run tests using the binary built before
 test:cc7:
   <<: *cc7setup
@@ -228,38 +235,44 @@ test:cc7:
   <<: *common_artifacts
   # paths:
   #   - ${ARTIFACTS_DIR}
-  
-.before_package: &before_package
-  - mkdir -p ${ARTIFACTS_DIR}
-  - eval `set | egrep '^(CI|GIT)' | awk -F= '{ print "export " $1 }'`
-  - eval `set | egrep '^(BUILD|REL|PACK|ARTI|XDAQ|CMS|LD)' | awk -F= '{ print "export " $1 }'`
-  - |
-    pip install -I --user "pip" "importlib" "codecov" "setuptools<38.2"
-    sudo yum install -y wiscrpcsvc\* --enablerepo=gemos*
-    sudo yum install -y reedmuller\* --enablerepo=gemos*
+
+.touch_package_artifacts: &touch_package_artifacts |-
+  find ./python/reg_interface_gem/pkg/xhal -type f -print0 -exec touch {} \;
+  find ./python/reg_interface_gem/rpm -type f -iname 'setup.py' -print0 -exec touch {} \;
+  find ./python/reg_interface_gem/rpm -type f -iname 'reg_interface_gem.src.rpm' -print0 -exec touch {} \;
+  find ./python/reg_interface_gem/rpm -type f -iname 'reg_interface_gem.x86_64.rpm' -print0 -exec touch {} \;
+  find ./python/reg_interface_gem/rpm -type f -iname 'reg_interface_gem.zip' -print0 -exec touch {} \;
+  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.tbz2' -print0 -exec touch {} \;
+  find ./xhal*/rpm -type f -wholename '*/rpm/xhal.spec' -print0 -exec touch {} \;
+  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.src.rpm' -print0 -exec touch {} \;
+  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.arm*.rpm' -print0 -exec touch {} \;
+  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.x86_64.rpm' -print0 -exec touch {} \;
+
+.before_package: &before_package |-
+  eval `set | egrep '^(CI|GIT)' | awk -F= '{ print "export " $1 }'`
+  eval `set | egrep '^(BUILD|REL|PACK|ARTI|XDAQ|CMS|LD)' | awk -F= '{ print "export " $1 }'`
 
 .package_common: &package_common
   stage: package
   before_script:
-    *before_package
+    - *common_setup
+    - *before_package
   script:
     ## Ensure compile artifacts are more recent than the checkout
-    - |
-      find ./ -type f -name '*.d' -print0 -exec touch {} \;
-      find ./ -type f -name '*.o' -print0 -exec touch {} \;
-      find ./ -type f -name '*.so' -print0 -exec touch {} \;
-    - make release
+    - *touch_compile_artifacts
+    - *touch_docs_artifacts
+    - make rpm
     ## Move packaged files to deployment staging area
     - eval `set | egrep '^(CI|GIT)' | awk -F= '{ print "export " $1 }'`
     - eval `set | egrep '^(EOS|BUILD|REL|PACK|ARTI|XDAQ|CMS|LD)' | awk -F= '{ print "export " $1 }'`
-    - mv repos ${ARTIFACTS_DIR}
   after_script:
+#    - mv repos ${ARTIFACTS_DIR}
     - ls -la ${ARTIFACTS_DIR}
     - ls -la ${ARTIFACTS_DIR}/repos
   artifacts:
     name: ${CI_JOB_STAGE}
     <<: *package_artifacts
-  
+
 # generate RPMs
 package:cc7:unstable:
   <<: *cc7setup
@@ -317,16 +330,16 @@ package:cc7:base:
 
 ##### ------------------- Publish RPMs, docs, and tarballs ------------------- #####
 .publish_variables: &publish_variables
-  EOS_BASE_WEB_DIR:   "/eos/project/c/cmsgemdaq/www"
+  EOS_BASE_WEB_DIR:   "/eos/project/c/cmsgemdaq/www/ci-test"
   EOS_COMMON_WEB_DIR: "cmsgemdaq"
   EOS_DOC_NAME:       "api"
   EOS_REPO_NAME:      "repos"
   EOS_SITE_WEB_DIR:   "${EOS_BASE_WEB_DIR}/${CI_PROJECT_NAME}"
-  EOS_SW_DIR:         "${EOS_BASE_WEB_DIR}/sw/${CI_PROJECT_NAME}"
-  EOS_DOCS_DIR:       "${EOS_BASE_WEB_DIR}/docs/${CI_PROJECT_NAME}"
-  EOS_UNSTABLE_DIR:   "${EOS_BASE_WEB_DIR}/sw/${CI_PROJECT_NAME}/unstable"
-  EOS_RELEASE_DIR:    "${EOS_BASE_WEB_DIR}/sw/${CI_PROJECT_NAME}/releases"
-  
+  EOS_SW_DIR:         "sw/${CI_PROJECT_NAME}"
+  EOS_DOCS_DIR:       "docs/${CI_PROJECT_NAME}"
+  EOS_UNSTABLE_DIR:   "unstable"
+  EOS_RELEASE_DIR:    "releases"
+
 .publish_common: &publish_common
   <<: *cc7setup
   stage: publish
@@ -334,6 +347,8 @@ package:cc7:base:
   before_script:
     - eval `set | egrep '^(KRB|CI|GIT)' | awk -F= '{ print "export " $1 }'`
     - eval `set | egrep '^(EOS|BUILD|REL|PACK|ARTI|XDAQ|CMS|LD)' | awk -F= '{ print "export " $1 }'`
+    - *common_setup
+    - sudo yum install -y rpm-sign
   script:
     # - push python packages to pypi/conda
     # - push RPMs to packagecloud.io
@@ -342,9 +357,14 @@ package:cc7:base:
     # - push sphinx/rst/md/rtd docs to $EOS_WEB_DIR/docs/${fulltag}, update doc main page index
     - 'echo "FIXME: github_changelog_generator"'
     - 'echo "FIXME: cp CHANGELOG.md ${ARTIFACTS_DIR}"'
+    - *touch_compile_artifacts
+    - *touch_docs_artifacts
+    - *touch_package_artifacts
+    - make release
+    - cp -rfp release/* ${ARTIFACTS_DIR}
     - ${BUILD_HOME}/${CI_PROJECT_NAME}/config/ci/publish_eos.sh
     - if [ -n "${DEBUG_CI}" ]; then sleep 500; fi
-    
+
 # publish:debug:
 #   variables:
 #     EOS_BASE_WEB_DIR: /tmp/

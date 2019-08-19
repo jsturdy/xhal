@@ -12,6 +12,7 @@ SUBPACKAGES.RPM      := $(patsubst %,%.rpm,      $(SUBPACKAGES))
 SUBPACKAGES.CLEANRPM := $(patsubst %,%.cleanrpm, $(SUBPACKAGES))
 SUBPACKAGES.DOC      := $(patsubst %,%.doc,      $(SUBPACKAGES))
 SUBPACKAGES.CLEANDOC := $(patsubst %,%.cleandoc, $(SUBPACKAGES))
+SUBPACKAGES.CLEANALL := $(patsubst %,%.cleanall, $(SUBPACKAGES))
 
 .PHONY: $(SUBPACKAGES) \
 	$(SUBPACKAGES.CLEAN) \
@@ -21,7 +22,8 @@ SUBPACKAGES.CLEANDOC := $(patsubst %,%.cleandoc, $(SUBPACKAGES))
 	$(SUBPACKAGES.RPM) \
 	$(SUBPACKAGES.CLEANRPM) \
 	$(SUBPACKAGES.DOC) \
-	$(SUBPACKAGES.CLEANDOC)
+	$(SUBPACKAGES.CLEANDOC) \
+	$(SUBPACKAGES.CLEANALL)
 
 .PHONY: all build doc install uninstall rpm release
 .PHONY: clean cleanall cleandoc cleanrpm cleanrelease
@@ -56,7 +58,7 @@ release: $(SUBPACKAGES.RELEASE)
 cleanrelease:
 	-rm -rf release
 
-cleanall: clean cleandoc cleanrpm cleanrelease
+cleanall: $(SUBPACKAGES.CLEANALL) cleanrelease
 
 $(SUBPACKAGES):
 	$(MAKE) -C $@
@@ -72,6 +74,9 @@ $(SUBPACKAGES.CLEANDOC):
 
 $(SUBPACKAGES.CLEANRPM):
 	$(MAKE) -C $(patsubst %.cleanrpm,%, $@) cleanrpm
+
+$(SUBPACKAGES.CLEANALL):
+	$(MAKE) -C $(patsubst %.cleanall,%, $@) cleanall
 
 $(SUBPACKAGES.DOC):
 	$(MAKE) -C $(patsubst %.doc,%, $@) doc
