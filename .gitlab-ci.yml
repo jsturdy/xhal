@@ -245,11 +245,11 @@ test:cc7:
   find ./python/reg_interface_gem/rpm -type f -iname 'reg_interface_gem.src.rpm' -print0 -exec touch {} \;
   find ./python/reg_interface_gem/rpm -type f -iname 'reg_interface_gem.x86_64.rpm' -print0 -exec touch {} \;
   find ./python/reg_interface_gem/rpm -type f -iname 'reg_interface_gem.zip' -print0 -exec touch {} \;
-  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.tbz2' -print0 -exec touch {} \;
-  find ./xhal*/rpm -type f -wholename '*/rpm/xhal.spec' -print0 -exec touch {} \;
-  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.src.rpm' -print0 -exec touch {} \;
-  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.arm*.rpm' -print0 -exec touch {} \;
-  find ./xhal*/rpm -type f -wholename '*/rpm/xhal*.x86_64.rpm' -print0 -exec touch {} \;
+  find ./xhal -type f -wholename '*/rpm/xhal*.tbz2' -print0 -exec touch {} \;
+  find ./xhal -type f -wholename '*/rpm/xhal.spec' -print0 -exec touch {} \;
+  find ./xhal -type f -wholename '*/rpm/xhal*.src.rpm' -print0 -exec touch {} \;
+  find ./xhal -type f -wholename '*/rpm/xhal*.arm*.rpm' -print0 -exec touch {} \;
+  find ./xhal -type f -wholename '*/rpm/xhal*.x86_64.rpm' -print0 -exec touch {} \;
 
 .before_package: &before_package |-
   eval `set | egrep '^(CI|GIT)' | awk -F= '{ print "export " $1 }'`

@@ -1,152 +1,86 @@
-BUILD_HOME   := $(shell dirname `cd ../; pwd`)
-Project      := xhal
-Package      := xhal
-ShortPackage := xhal
-LongPackage  := xhalcore
-PackageName  := $(ShortPackage)
-PackagePath  := $(shell pwd)
-PackageDir   := pkg/$(ShortPackage)
-Packager     := Mykhailo Dalchenko
-Arch         := x86_64
+TARGETS := arm x86_64
 
-ProjectPath:= $(BUILD_HOME)/$(Project)
-ConfigDir  := $(ProjectPath)/config
+TARGETS.RPM        := $(patsubst %,%.rpm,         $(TARGETS))
+TARGETS.CLEAN      := $(patsubst %,%.clean,       $(TARGETS))
+TARGETS.CLEANRPM   := $(patsubst %,%.cleanrpm,    $(TARGETS))
+TARGETS.CLEANALLRPM:= $(patsubst %,%.cleanallrpm, $(TARGETS))
+TARGETS.CLEANALL   := $(patsubst %,%.cleanall,    $(TARGETS))
+TARGETS.INSTALL    := $(patsubst %,%.install,     $(TARGETS))
+TARGETS.UNINSTALL  := $(patsubst %,%.uninstall,   $(TARGETS))
+TARGETS.RELEASE    := $(patsubst %,%.release,     $(TARGETS))
 
-include $(ConfigDir)/mfCommonDefs.mk
-include $(ConfigDir)/mfPythonDefs.mk
+.PHONY: $(TARGETS) \
+	$(TARGETS.CLEAN) \
+	$(TARGETS.INSTALL) \
+	$(TARGETS.UNINSTALL) \
+	$(TARGETS.RELEASE) \
+	$(TARGETS.RPM) \
+	$(TARGETS.CLEANRPM) \
+	$(TARGETS.CLEANALLRPM) \
+	$(TARGETS.CLEANALL)
 
-PackageSourceDir:=$(PackagePath)/src/common
-PackageObjectDir:=$(PackagePath)/src/linux/$(Arch)
-PackageDocsDir:=$(PackagePath)/doc/_build/html
+.PHONY: all default install uninstall rpm release
+.PHONY: clean cleanall cleanrpm cleanallrpm
 
-XHAL_VER_MAJOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
-XHAL_VER_MINOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
-XHAL_VER_PATCH:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[3];}' | awk '{split($$0,b,":"); print b[2];}')
+default: all
 
-CCFLAGS=-fno-inline -Wall -pthread
-ADDFLAGS=-g -fPIC -std=c++11 -m64
+all: $(TARGETS) doc
 
-IncludeDirs+= $(XDAQ_ROOT)/include
-IncludeDirs+= $(PackageIncludeDir)
-INC=$(IncludeDirs:%=-I%)
+rpm: $(TARGETS) $(TARGETS.RPM)
 
-Libraries+=-llog4cplus -lxerces-c -lwiscrpcsvc -lstdc++
+clean: $(TARGETS.CLEAN)
 
-LibraryDirs+=-L$(XDAQ_ROOT)/lib
-LibraryDirs+=-L$(PackageLibraryDir)
-LibraryDirs+=-L/opt/wiscrpcsvc/lib
+cleanall: $(TARGETS.CLEANALL) cleandoc
 
-LDFLAGS+= -shared $(LibraryDirs)
+cleanrpm: $(TARGETS.CLEANRPM)
 
-SRCS_XHAL   = $(wildcard $(PackageSourceDir)/*.cpp)
-SRCS_UTILS  = $(wildcard $(PackageSourceDir)/utils/*.cpp)
-SRCS_UTILS += $(wildcard $(PackageSourceDir)/rpc/*.cpp)
-SRCS_XHALPY = $(wildcard $(PackageSourceDir)/python_wrappers/*.cpp)
-SRCS_RPCMAN = $(wildcard $(PackageSourceDir)/rpc_manager/*.cpp)
-# SRCS_EXES     = $(wildcard $(PackageSourceDir)/*.cxx)
-# SRCS_TEST_EXES= $(wildcard $(PackageTestSourceDir)/*.cxx)
+cleanallrpm: $(TARGETS.CLEANALLRPM)
 
-AUTODEPS_XHAL   = $(patsubst $(PackageSourceDir)/%.cpp,$(PackageObjectDir)/%.d,$(SRCS_XHAL))
-AUTODEPS_UTILS  = $(patsubst $(PackageSourceDir)/%.cpp,$(PackageObjectDir)/%.d,$(SRCS_UTILS))
-AUTODEPS_XHALPY = $(patsubst $(PackageSourceDir)/%.cpp,$(PackageObjectDir)/%.d,$(SRCS_XHALPY))
-AUTODEPS_RPCMAN = $(patsubst $(PackageSourceDir)/%.cpp,$(PackageObjectDir)/%.d,$(SRCS_RPCMAN))
+install: $(TARGETS.INSTALL)
 
-OBJS_XHAL   = $(patsubst %.d,%.o,$(AUTODEPS_XHAL))
-OBJS_UTILS  = $(patsubst %.d,%.o,$(AUTODEPS_UTILS))
-OBJS_XHALPY = $(patsubst %.d,%.o,$(AUTODEPS_XHALPY))
-OBJS_RPCMAN = $(patsubst %.d,%.o,$(AUTODEPS_RPCMAN))
+uninstall: $(TARGETS.UNINSTALL)
 
-XHAL_LIB   = $(PackageLibraryDir)/libxhal.so
-XHALPY_LIB = $(PackageLibraryDir)/xhalpy.so
-RPCMAN_LIB = $(PackageLibraryDir)/librpcman.so
+release: $(TARGETS.RELEASE)
 
-TargetLibraries:= xhal xhalpy rpcman
+$(TARGETS):
+	TargetArch=$@ $(MAKE) -f xhal.mk build
 
-include $(ConfigDir)/mfRPMRules.mk
+$(TARGETS.RPM):
+	TargetArch=$(patsubst %.rpm,%,$@) $(MAKE) -f xhal.mk rpm
 
-# destination path macro we'll use below
-df = $(PackageObjectDir)/$(*F)
+$(TARGETS.CLEAN):
+	TargetArch=$(patsubst %.clean,%,$@) $(MAKE) -f xhal.mk clean
 
-.PHONY: xhal rpc
+$(TARGETS.CLEANRPM):
+	TargetArch=$(patsubst %.cleanrpm,%,$@) $(MAKE) -f xhal.mk cleanrpm
 
-## @xhalcore Compile all target libraries
-build: $(TargetLibraries)
+$(TARGETS.CLEANALLRPM):
+	TargetArch=$(patsubst %.cleanallrpm,%,$@) $(MAKE) -f xhal.mk cleanallrpm
 
-all: build
+$(TARGETS.CLEANALL):
+	TargetArch=$(patsubst %.cleanall,%,$@) $(MAKE) -f xhal.mk cleanall
 
-default: build
-	$(MakeDir) $(PackageDir)
+$(TARGETS.INSTALL):
+	TargetArch=$(patsubst %.install,%,$@) $(MAKE) -f xhal.mk install
 
-## @xhalcore Prepare the package for building the RPM
-rpmprep: build doc
+$(TARGETS.UNINSTALL):
+	TargetArch=$(patsubst %.uninstall,%,$@) $(MAKE) -f xhal.mk uninstall
 
-# Define as dependency everything that should cause a rebuild
-$(PackageSourceTarball): $(XHAL_LIB) $(XHALPY_LIB) $(RPCMAN_LIB) Makefile $(ProjectPath)/xhalarm/lib/libxhal*
-	$(MakeDir) $(RPM_DIR)
-	$(MakeDir) lib/arm
-	$(MakeDir) $(PackageDir)/$(Package)
-	@cp -rfp $(ProjectPath)/xhalarm/lib/* lib/arm
-	@cp -rfp lib include Makefile $(PackageDir)/$(Package)
-	@cp -rfp src $(PackageDir)/$(Package)
-#	@cp -rfp --parents src/common $(PackageDir)/$(Package)
-	@cp -rfp $(ProjectPath)/config $(PackageDir)
-	cd $(PackageDir)/..; \
-	    tar cjf $(PackageSourceTarball) $(PackageName);
-	$(RM) $(PackageDir)/$(Package)
-
-## @xhalcore Compile the xhal RPC manager library
-rpc: xhal $(RPCMAN_LIB)
-
-## @xhalcore Compile the xhal library
-xhal: $(XHAL_LIB)
-
-## @xhalcore Compile the xhal python bindings
-xhalpy: xhal rpc $(XHALPY_LIB)
+$(TARGETS.RELEASE):
+	TargetArch=$(patsubst %.release,%,$@) $(MAKE) -f xhal.mk release
 
 doc:
 	@echo "TO DO"
 
-## adapted from http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
-## Generic object creation rule, generate dependencies and use them later
-$(PackageObjectDir)/%.o: $(PackageSourceDir)/%.cpp Makefile
-	$(MakeDir) $(@D)
-	$(CXX) $(CCFLAGS) $(ADDFLAGS) $(INC) -c -MT $@ -MMD -MP -MF $(@D)/$(*F).Td -o $@ $<
-	mv $(@D)/$(*F).Td $(@D)/$(*F).d
-	touch $@
-
-## dummy rule for dependencies
-$(PackageObjectDir)/%.d:
-
-## mark dependencies and objects as not auto-removed
-.PRECIOUS: $(PackageObjectDir)/%.d
-.PRECIOUS: $(PackageObjectDir)/%.o
-
-## Force rule for all target library names
-$(TargetLibraries):
-
-$(XHAL_LIB): $(OBJS_XHAL) $(OBJS_UTILS)
-	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
-	$(link-sonames)
-
-$(RPCMAN_LIB): $(OBJS_RPCMAN)
-	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -o $(@D)/$(LibraryFull) $^ $(Libraries)
-	$(link-sonames)
-
-$(XHALPY_LIB): $(OBJS_XHALPY) $(XHAL_LIB) $(RPCMAN_LIB)
-	$(MakeDir) -p $(@D)
-	$(CXX) $(ADDFLAGS) $(LDFLAGS) -L$(PYTHON_LIB_PREFIX) -o $(@D)/$(LibraryFull) $^ $(Libraries) -lboost_python -l$(PYTHON_LIB) -lxhal -lrpcman
-	$(link-sonames)
-
-clean:
-	$(RM) $(OBJS_UTILS) $(OBJS_XHAL) $(OBJS_RPCMAN) $(OBJS_XHALPY)
-	$(RM) $(PackageLibraryDir)
-	$(RM) $(PackageExecDir)
-	$(RM) $(PackageDir)
-
 cleandoc: 
 	@echo "TO DO"
 
-cleanall:
-	$(RM) $(PackageObjectDir)
+arm:
+
+x86_64:
+
+ctp7:
+
+bcp:
+
+apx:

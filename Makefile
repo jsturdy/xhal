@@ -1,7 +1,6 @@
 SUBPACKAGES := \
         python \
-        xhalcore \
-        xhalarm
+        xhal
 
 SUBPACKAGES.CLEAN    := $(patsubst %,%.clean,    $(SUBPACKAGES))
 SUBPACKAGES.DEBUG    := $(patsubst %,%.debug,    $(SUBPACKAGES))
@@ -91,11 +90,3 @@ $(SUBPACKAGES.RELEASE): $(SUBPACKAGES)
 	$(MAKE) -C $(patsubst %.release,%, $@) release
 
 python:
-
-xhalarm:
-
-xhalcore:
-
-xhalcore.install: xhalarm
-
-xhalcore.rpm: xhalarm
