@@ -34,7 +34,7 @@ namespace xhal {
      */
     class LMDBGuard
     {
-    public:
+      public:
         /**
          * @brief Constructs a guard.
          */
