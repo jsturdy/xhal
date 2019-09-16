@@ -20,7 +20,7 @@ PyObject* createExceptionClass(const char* name, PyObject* baseTypeObj = PyExc_E
     char* qualifiedName1 = const_cast<char*>(qualifiedName0.c_str());
 
     PyObject* typeObj = PyErr_NewException(qualifiedName1, baseTypeObj, 0);
-    if(!typeObj) bp::throw_error_already_set();
+    if (!typeObj) bp::throw_error_already_set();
     bp::scope().attr(name) = bp::handle<>(bp::borrowed(typeObj));
     return typeObj;
 }
@@ -34,7 +34,7 @@ inline void TRANSLATOR_NAME(EXCEPTION_NAME const& e)                            
   assert(EXCEPTION_OBJ != NULL);                                                     \
   /* Use the Python 'C' API to set up an exception object*/                          \
   PyErr_SetString(EXCEPTION_OBJ, e.msg.c_str());                                     \
-}                                                                    
+}
 #endif
 
 PY_EXCEPTION_TRANSLATOR(translate_XHALException,xhal::common::utils::XHALException, obj_XHALException)
