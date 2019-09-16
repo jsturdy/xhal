@@ -1,10 +1,10 @@
-/*!
- * \file
- * \brief This file contains all the functions needed to register
+/**
+ * @file
+ * @brief This file contains all the functions needed to register
  * a remotely callable RPC method
  *
- * \author Laurent Pétré <lpetre@ulb.ac.be>
- * \author Louis Moureaux <lmoureau@ulb.ac.be>
+ * @author Laurent Pétré <lpetre@ulb.ac.be>
+ * @author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
 #ifndef XHAL_COMMON_RPC_REGISTER_H
@@ -25,9 +25,9 @@ namespace xhal {
       namespace helper {
 
         /**
-         * \brief Handles an exception, setting the error key on the response.
+         * @brief Handles an exception, setting the error key on the response.
          *
-         * In case a second exception occurs when setting the error key, \c std::terminate is called.
+         * In case a second exception occurs when setting the error key, @c std::terminate is called.
          */
         template<typename Exception>
         void handleException(const Exception &e, wisc::RPCMsg *response) noexcept
@@ -37,10 +37,10 @@ namespace xhal {
             setExceptionType(response);
         }
 
-        /*
-         * Handles an unknown exception, setting the error key on the response.
+        /**
+         * @brief Handles an unknown exception, setting the error key on the response.
          *
-         * In case an exception occurs when setting the error key, \c std::terminate is called.
+         * In case an exception occurs when setting the error key, @c std::terminate is called.
          */
         void handleException(wisc::RPCMsg *response) noexcept
         {
@@ -51,12 +51,12 @@ namespace xhal {
 
     } // namespace helper
 
-    /*!
-     * \brief Locally invoke a RPC method
+    /**
+     * @brief Locally invoke a RPC method
      *
      * This function is the wrapper called for every remote function call. It
-     * deserializes the arguments from the \c wisc::RPCMsg, calls the local functor
-     * and then serializes the return value to the \c wisc::RPCMsg.
+     * deserializes the arguments from the @c wisc::RPCMsg, calls the local functor
+     * and then serializes the return value to the @c wisc::RPCMsg.
      */
     template<typename Method,
              typename std::enable_if<std::is_base_of<xhal::rpc::Method, Method>::value, int>::type = 0
@@ -93,8 +93,8 @@ namespace xhal {
         }
     }
 
-    /*!
-     * \brief Register a RPC method into the \c ModuleManager
+    /**
+     * @brief Register a RPC method into the @c ModuleManager
      *
      * This helper function register a RPC method with the right parameters
      * so it can be remotely called.

@@ -1,10 +1,10 @@
-/*!
- * \file
- * \brief This file contains all the functions needed to call
+/**
+ * @file
+ * @brief This file contains all the functions needed to call
  * remotely a RPC method
  *
- * \author Laurent Pétré <lpetre@ulb.ac.be>
- * \author Louis Moureaux <lmoureau@ulb.ac.be>
+ * @author Laurent Pétré <lpetre@ulb.ac.be>
+ * @author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
 #ifndef XHAL_COMMON_RPC_CALL_H
@@ -23,12 +23,12 @@ namespace xhal {
   namespace common {
     namespace rpc {
 
-    /*!
-     * \brief Remotely call a RPC method
+    /**
+     * @brief Remotely call a RPC method
      *
      * The remote method called is defined by the template parameter
-     * \c Method. The arguments to give to the function are those from
-     * the \c Method::operator() signature and their types \b must be deducible.
+     * @c Method. The arguments to give to the function are those from
+     * the @c Method::operator() signature and their types @b must be deducible.
      */
     template<typename Method,
              typename... Args,
@@ -37,14 +37,14 @@ namespace xhal {
     helper::functor_return_t<Method> call(wisc::RPCSvc &connection, Args&&... args);
 
     /**
-     * \brief Thrown by \ref call when an exception is thrown on the remote host.
+     * @brief Thrown by @ref call when an exception is thrown on the remote host.
      */
     class RemoteException : public std::runtime_error
     {
         std::string m_type;
 
         /**
-         * \brief \ref call is the only function that can throw this exception.
+         * @brief @ref call is the only function that can throw this exception.
          */
         template<typename Method,
                  typename... Args,
@@ -54,8 +54,8 @@ namespace xhal {
                                                      Args&&... args);
 
         /**
-         * \brief Constructor.
-         * \param response An RPC response to extract error information from.
+         * @brief Constructor.
+         * @param response An RPC response to extract error information from.
          */
         explicit RemoteException(const wisc::RPCMsg &response) :
             std::runtime_error(helper::readExceptionMessage(response)),
@@ -66,18 +66,18 @@ namespace xhal {
 
     public:
         /**
-         * \brief Returns \c true if the type of the exception is available.
+         * @brief Returns @c true if the type of the exception is available.
          */
         bool hasType() const { return !m_type.empty(); }
 
         /**
-         * \brief Returns the exception type name if available, an empty string otherwise.
+         * @brief Returns the exception type name if available, an empty string otherwise.
          */
         std::string type() const { return m_type; }
     };
 
     /**
-     * \brief Thrown by \c call when there is a problem calling the remote method.
+     * @brief Thrown by @c call when there is a problem calling the remote method.
      *
      * This can be either because the Wisconsin messaging layer throws an exception or because
      * the method can't be found.
@@ -85,7 +85,7 @@ namespace xhal {
     class MessageException : public std::runtime_error
     {
         /**
-         * \brief \ref call is the only function that can throw this exception.
+         * @brief @ref call is the only function that can throw this exception.
          */
         template<typename Method,
                  typename... Args,
@@ -95,7 +95,7 @@ namespace xhal {
                                                      Args&&... args);
 
         /**
-         * \brief Constructor.
+         * @brief Constructor.
          */
         explicit MessageException(const std::string &message) :
             std::runtime_error(message)

@@ -1,8 +1,8 @@
-/*!
- * \file
- * \brief This file contains utilities dealing with the LMDB register database.
+/**
+ * @file
+ * @brief This file contains utilities dealing with the LMDB register database.
  *
- * \author Louis Moureaux <lmoureau@ulb.ac.be>
+ * @author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
 #ifndef XHAL_SERVER_LMDB_H
@@ -14,7 +14,7 @@ namespace xhal {
   namespace server {
 
     /**
-     * \brief Provides access to shared LMDB data structures.
+     * @brief Provides access to shared LMDB data structures.
      *
      * This class uses the "guard" pattern to provide access to LMDB data structures: an
      * environment, a database handle and a read-only transaction. These objects are
@@ -30,69 +30,69 @@ namespace xhal {
      * When the first guard is created, it sets up the objects required to read from the
      * database. These objects are released automatically when the last guard is deleted.
      *
-     * \warning This class is not thread-safe.
+     * @warning This class is not thread-safe.
      */
     class LMDBGuard
     {
     public:
         /**
-         * \brief Constructs a guard.
+         * @brief Constructs a guard.
          */
         LMDBGuard();
 
         /**
-         * \brief Copy constructor.
+         * @brief Copy constructor.
          */
         LMDBGuard(const LMDBGuard &) = default;
 
         /**
-         * \brief Assignment operator.
+         * @brief Assignment operator.
          */
         LMDBGuard &operator=(const LMDBGuard &) = default;
 
         /**
-         * \brief Move constructor.
+         * @brief Move constructor.
          */
         constexpr LMDBGuard(LMDBGuard &&) = default;
 
         /**
-         * \brief Move operator.
+         * @brief Move operator.
          */
         // Can't be made constexpr in GCC 4.9
         LMDBGuard &operator=(LMDBGuard &&) = default;
 
         /**
-         * \brief Destructor. Resources are freed when the last guard is deleted.
+         * @brief Destructor. Resources are freed when the last guard is deleted.
          */
         ~LMDBGuard() noexcept;
 
         /**
-         * \brief Retrieves the LMDB environment.
+         * @brief Retrieves the LMDB environment.
          */
         lmdb::env &env() noexcept;
 
         /**
-         * \brief Retrieves the LMDB environment (\c const version).
+         * @brief Retrieves the LMDB environment (@c const version).
          */
         const lmdb::env &env() const noexcept;
 
         /**
-         * \brief Retrieves the LMDB database handle.
+         * @brief Retrieves the LMDB database handle.
          */
         lmdb::dbi &dbi() noexcept;
 
         /**
-         * \brief Retrieves the LMDB database handle (\c const version).
+         * @brief Retrieves the LMDB database handle (@c const version).
          */
         const lmdb::dbi &dbi() const noexcept;
 
         /**
-         * \brief Retrieves a read-only LMDB transaction.
+         * @brief Retrieves a read-only LMDB transaction.
          */
         lmdb::txn &rtxn() noexcept;
 
         /**
-         * \brief Retrieves a read-only LMDB transaction (\c const version).
+         * @brief Retrieves a read-only LMDB transaction (@c const version).
          */
         const lmdb::txn &rtxn() const noexcept;
     };

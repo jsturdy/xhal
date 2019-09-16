@@ -3,7 +3,7 @@
  * Hardware interface for XHAL
  *
  * @author Mykhailo Dalchenko
- * @version 1.0 
+ * @version 1.0
  */
 
 #ifndef XHAL_CLIENT_XHALINTERFACE_H
@@ -42,7 +42,7 @@
   catch (wisc::RPCMsg::BadKeyException &e) { \
     XHAL_ERROR("Caught exception: " << e.key.c_str()); \
     throw xhal::common::utils::XHALRPCException("RPC BadKeyException (most probably remote register not accessible): " + e.key);\
-	} 
+	}
 
 #define ASSERT(x) do { \
 		if (!(x)) { \
@@ -55,7 +55,7 @@ namespace xhal {
   namespace client {
     /**
      * @class XHALInterface
-     * @brief Provides interface to call remote procedures at Zynq CPU 
+     * @brief Provides interface to call remote procedures at Zynq CPU
      */
     class XHALInterface
     {
@@ -70,29 +70,29 @@ namespace xhal {
          * @param board_domain_name domain name of CTP7
          */
         XHALInterface(const std::string& board_domain_name, log4cplus::Logger& logger);
-  
+
         virtual ~XHALInterface();
-  
+
         /**
          * @brief Initialize interface and establish RPC service connection with CTP7
          */
         void connect();
-  
+
         /**
          * @brief Reconnect to RPC service and reload required modules
          */
         virtual void reconnect();
-  
+
         /**
          * @brief Initialize interface and establish RPC service connection with CTP7
          */
         void disconnect();
-  
+
         /**
          * @brief load remote module
          */
         void loadModule(const std::string& module_name, const std::string& module_version);
-  
+
         /**
          * @brief sets amount of logging/debugging information to display
          * @param loglevel:
@@ -103,7 +103,7 @@ namespace xhal {
          * 4 - TRACE
          */
         void setLogLevel(int loglevel);
-  
+
       protected:
         std::string m_board_domain_name;
         log4cplus::Logger m_logger;

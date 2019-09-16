@@ -1,8 +1,8 @@
-/*!
- * \file
- * \brief Contains the classes required for defining remotely callable RPC methods
+/**
+ * @file
+ * @brief Contains the classes required for defining remotely callable RPC methods
  *
- * \author Laurent Pétré <lpetre@ulb.ac.be>
+ * @author Laurent Pétré <lpetre@ulb.ac.be>
  */
 
 #ifndef XHAL_COMMON_RPC_COMMON_H
@@ -24,55 +24,55 @@ namespace xhal {
   namespace common {
     namespace rpc {
 
-    /*!
-     * \brief Defines the templated RPC ABI version
+    /**
+     * @brief Defines the templated RPC ABI version
      */
     static constexpr const char* abiVersion = "v1";
 
-    /*!
-     * \brief Class whose all remotely callable RPC method must inherit from
+    /**
+     * @brief Class whose all remotely callable RPC method must inherit from
      *
      * The required inheritance is used as a compile time check so a developer
      * cannot remotely call a local function by mistake.
      */
     struct Method
     {
-        /*!
-         * \brief The operator call must be define <b>once and only once</b> per
+        /**
+         * @brief The operator call must be define <b>once and only once</b> per
          * RPC method.
          *
          * This templated operator declaration is only shown as an example and
          * emphasizes the need of defining it in child classes.
          *
-         * \warnng The call operator \b must be defined as \c const.
+         * @warnng The call operator @b must be defined as @c const.
          */
         template<typename R, typename... Args> R operator()(Args...) const;
     };
 
-    /*!
-     * \brief Base of the \c MessageSerializer and \c MessageDeserializer classes
+    /**
+     * @brief Base of the @c MessageSerializer and @c MessageDeserializer classes
      *
-     * \c MessageBase provides the key index tracking functionnality which
+     * @c MessageBase provides the key index tracking functionnality which
      * is mandatory for serialization.
      */
     class MessageBase {
 
-        /*!
-         * \brief Index to the next free/unread key
+        /**
+         * @brief Index to the next free/unread key
          */
         uint32_t _keyIdx = 0;
 
       protected:
 
-        /*
-         * \brief Returns the next free/unread key
+        /**
+         * @brief Returns the next free/unread key
          */
         inline uint32_t dispenseKey() { return _keyIdx++; }
 
     };
 
-    /*!
-     * \brief This class serializes parameters into a \c wisc::RPCMsg
+    /**
+     * @brief This class serializes parameters into a @c wisc::RPCMsg
      */
     class MessageSerializer : public MessageBase
     {
@@ -81,8 +81,8 @@ namespace xhal {
 
         wisc::RPCMsg *m_wiscMsg;
 
-        /*!
-         * \brief Serializes custom types if possible or else supresses implicit type conversions
+        /**
+         * @brief Serializes custom types if possible or else supresses implicit type conversions
          *
          * Every type not defined hereunder is taken care of by this templated function.
          * The function serves two purposes:
@@ -98,36 +98,36 @@ namespace xhal {
             serialize(*this, const_cast<T &>(t));
         }
 
-        /*!
-         * \brief Adds a \c std::uint32_t to the message
+        /**
+         * @brief Adds a @c std::uint32_t to the message
          */
         inline void save(const std::uint32_t value) {
             m_wiscMsg->set_word(std::to_string(dispenseKey()), value);
         }
 
-        /*!
-         * \brief Adds a \c std::vector<std::uint32_t> to the message
+        /**
+         * @brief Adds a @c std::vector<std::uint32_t> to the message
          */
         inline void save(const std::vector<std::uint32_t> &value) {
             m_wiscMsg->set_word_array(std::to_string(dispenseKey()), value);
         }
 
-        /*!
-         * \brief Adds a \c std::string to the message
+        /**
+         * @brief Adds a @c std::string to the message
          */
         inline void save(const std::string &value) {
             m_wiscMsg->set_string(std::to_string(dispenseKey()), value);
         }
 
-        /*!
-         * \brief Adds a \c std::vector<std::string> to the message
+        /**
+         * @brief Adds a @c std::vector<std::string> to the message
          */
         inline void save(const std::vector<std::string> &value) {
             m_wiscMsg->set_string_array(std::to_string(dispenseKey()), value);
         }
 
-        /*!
-         * \brief Adds a \c std::array<T> to the message where \c T is an integral type (except \c bool)
+        /**
+         * @brief Adds a @c std::array<T> to the message where @c T is an integral type (except @c bool)
          */
         template<typename T,
                  std::size_t N,
@@ -137,8 +137,8 @@ namespace xhal {
             m_wiscMsg->set_binarydata(std::to_string(dispenseKey()), value.data(), N*sizeof(T));
         }
 
-        /*!
-         * \brief Adds a \c std::map<std::uint32_t, T> to the message where \c T is a serializable type
+        /**
+         * @brief Adds a @c std::map<std::uint32_t, T> to the message where @c T is a serializable type
          */
         template<typename T> inline void save(const std::map<std::uint32_t, T> &value) {
             // The first RPC key stores the std::map keys
@@ -156,8 +156,8 @@ namespace xhal {
             m_wiscMsg->set_word_array(std::to_string(keysKey), keys);
         }
 
-        /*!
-         * \brief Adds a \c std::map<std::string, T> to the message where \c T is a serializable type
+        /**
+         * @brief Adds a @c std::map<std::string, T> to the message where @c T is a serializable type
          */
         template<typename T> inline void save(const std::map<std::string, T> &value) {
             // The first RPC key stores the std::map keys
@@ -175,8 +175,8 @@ namespace xhal {
             m_wiscMsg->set_string_array(std::to_string(keysKey), keys);
         }
 
-        /*!
-         * \brief Adds the content of a \c void_holder to the message
+        /**
+         * @brief Adds the content of a @c void_holder to the message
          *
          * It should be used when setting the result from a function call.
          */
@@ -184,15 +184,15 @@ namespace xhal {
             this->save(holder.get());
         }
 
-        /*!
-         * \brief Specialization for the \c void special case
+        /**
+         * @brief Specialization for the @c void special case
          */
         inline void save(compat::void_holder<void>) {}
 
-        /*!
-         * \brief Serializes the arguments from a \c std::tuple
+        /**
+         * @brief Serializes the arguments from a @c std::tuple
          *
-         * \c std::tuple content is add from left to right to the message
+         * @c std::tuple content is add from left to right to the message
          * via a recursive template. It should be to serialize function arguments.
          */
         template<std::size_t I = 0,
@@ -204,8 +204,8 @@ namespace xhal {
             this->save<I+1>(args);
         }
 
-        /*!
-         * \brief Terminal call
+        /**
+         * @brief Terminal call
          */
         template<std::size_t I = 0,
                  typename... Args,
@@ -215,15 +215,15 @@ namespace xhal {
 
     public:
 
-        /*!
-         * \brief Constructor
+        /**
+         * @brief Constructor
          *
-         * Data are serialized into the \c wiscMsg message.
+         * Data are serialized into the @c wiscMsg message.
          */
         explicit MessageSerializer(wisc::RPCMsg *wiscMsg) noexcept : m_wiscMsg{wiscMsg} {}
 
-        /*!
-         * \brief Allows to serialize data into the message with a natural interface
+        /**
+         * @brief Allows to serialize data into the message with a natural interface
          */
         template<typename T>
         inline MessageSerializer & operator<<(const T &t) {
@@ -231,11 +231,11 @@ namespace xhal {
             return *this;
         }
 
-        /*!
-         * \brief Behaves as \c operator<<
+        /**
+         * @brief Behaves as @c operator<<
          *
-         * Is used for providing a unifed interface between \c MessageSerializer and
-         * \c MessageDeserializer so custom types serialization can be defined in a single
+         * Is used for providing a unifed interface between @c MessageSerializer and
+         * @c MessageDeserializer so custom types serialization can be defined in a single
          * function.
          */
         template<typename T>
@@ -246,11 +246,11 @@ namespace xhal {
 
     };
 
-    /*!
-     * \brief This class deserializes parameters from a \c wisc::RPCMsg
+    /**
+     * @brief This class deserializes parameters from a @c wisc::RPCMsg
      *
-     * While it cannot be made \c const because deserializing requires to keep
-     * track of the state, this class guarentees that the original \c wisc::RPCMsg
+     * While it cannot be made @c const because deserializing requires to keep
+     * track of the state, this class guarentees that the original @c wisc::RPCMsg
      * object will remain untouched.
      */
     class MessageDeserializer : public MessageBase {
@@ -259,8 +259,8 @@ namespace xhal {
 
         const wisc::RPCMsg *m_wiscMsg;
 
-        /*!
-         * \brief Deserializes custom types if possible or else supresses implicit type conversion
+        /**
+         * @brief Deserializes custom types if possible or else supresses implicit type conversion
          *
          * Every type not defined hereunder is taken care of by this templated function.
          * The function serves two purposes:
@@ -274,36 +274,36 @@ namespace xhal {
             serialize(*this, t);
         }
 
-        /*!
-         * \brief Retrieves a \c std::uint32_t from the message
+        /**
+         * @brief Retrieves a @c std::uint32_t from the message
          */
         inline void load(uint32_t &value) {
             value = m_wiscMsg->get_word(std::to_string(dispenseKey()));
         }
 
-        /*!
-         * \brief Retrieves a \c std::vector<std::uint32_t> from the message
+        /**
+         * @brief Retrieves a @c std::vector<std::uint32_t> from the message
          */
         inline void load(std::vector<std::uint32_t> &value) {
             value = m_wiscMsg->get_word_array(std::to_string(dispenseKey()));
         }
 
-        /*!
-         * \brief Retrieves a \c std::string from the message
+        /**
+         * @brief Retrieves a @c std::string from the message
          */
         inline void load(std::string &value) {
             value = m_wiscMsg->get_string(std::to_string(dispenseKey()));
         }
 
-        /*!
-         * \brief Retrieves a \c std::vector<std::string> from the message
+        /**
+         * @brief Retrieves a @c std::vector<std::string> from the message
          */
         inline void load(std::vector<std::string> &value) {
             value = m_wiscMsg->get_string_array(std::to_string(dispenseKey()));
         }
 
-        /*!
-         * \brief Retrieves a \c std::array<T> from the message where \c T is an integral type (except \c bool)
+        /**
+         * @brief Retrieves a @c std::array<T> from the message where @c T is an integral type (except @c bool)
          */
         template<typename T,
                  std::size_t N,
@@ -313,8 +313,8 @@ namespace xhal {
             m_wiscMsg->get_binarydata(std::to_string(dispenseKey()), value.data(), N*sizeof(T));
         }
 
-        /*!
-         * \brief Retrieves a \c std::map<std::uint32_t, T> from the message where \c T is a serializable type
+        /**
+         * @brief Retrieves a @c std::map<std::uint32_t, T> from the message where @c T is a serializable type
          */
         template<typename T> inline void load(std::map<std::uint32_t, T> &value) {
             const auto keys = m_wiscMsg->get_word_array(std::to_string(dispenseKey()));
@@ -326,8 +326,8 @@ namespace xhal {
             }
         }
 
-        /*!
-         * \brief Retrieves a \c std::map<std::string, T> from the message where \c T is a serializable type
+        /**
+         * @brief Retrieves a @c std::map<std::string, T> from the message where @c T is a serializable type
          */
         template<typename T> inline void load(std::map<std::string, T> &value) {
             const auto keys = m_wiscMsg->get_string_array(std::to_string(dispenseKey()));
@@ -339,9 +339,9 @@ namespace xhal {
             }
         }
 
-        /*!
-         * \brief Retrieves a \c T parameter from the message and stores it inside
-         * a \c void_holder.
+        /**
+         * @brief Retrieves a @c T parameter from the message and stores it inside
+         * a @c void_holder.
          *
          * It should be used when setting the result from a function.
          */
@@ -349,15 +349,15 @@ namespace xhal {
             this->load(value.get());
         }
 
-        /*!
-         * \brief Specialization for the \c void special case
+        /**
+         * @brief Specialization for the @c void special case
          */
         inline void load(compat::void_holder<void>) {}
 
-        /*!
-         * \brief Fills in a \c std::tuple with data from the message
+        /**
+         * @brief Fills in a @c std::tuple with data from the message
          *
-         * \c std::tuple content is filled from left to right from the message
+         * @c std::tuple content is filled from left to right from the message
          * via a recursive template. It should be use to deserialize function
          * arguments.
          */
@@ -370,8 +370,8 @@ namespace xhal {
             this->load<I+1>(args);
         }
 
-        /*!
-         * \brief Terminal call
+        /**
+         * @brief Terminal call
          */
         template<std::size_t I = 0,
                  typename... Args,
@@ -381,15 +381,15 @@ namespace xhal {
 
     public:
 
-        /*!
-         * \brief Constructor
+        /**
+         * @brief Constructor
          *
-         * Data are retrieved from the provided \c wiscMsg message.
+         * Data are retrieved from the provided @c wiscMsg message.
          */
         explicit MessageDeserializer(const wisc::RPCMsg *wiscMsg) noexcept : m_wiscMsg{wiscMsg} {}
 
-        /*!
-         * \brief Allows to deserialiaze data from the message with a natural interface
+        /**
+         * @brief Allows to deserialiaze data from the message with a natural interface
          */
         template <typename T>
         inline MessageDeserializer & operator>>(T &t) {
@@ -397,11 +397,11 @@ namespace xhal {
             return *this;
         }
 
-        /*!
-         * \brief Behaves as \c operator<<
+        /**
+         * @brief Behaves as @c operator<<
          *
-         * Is used for providing a unifed interface between \c MessageSerializer and
-         * \c MessageDeserializer so custom types serialization can be defined in a single
+         * Is used for providing a unifed interface between @c MessageSerializer and
+         * @c MessageDeserializer so custom types serialization can be defined in a single
          * function.
          */
         template <typename T>
@@ -412,16 +412,16 @@ namespace xhal {
 
     };
 
-    /*!
-     * \brief Provides a default (de)serialiazer in case the intrusive method is used
+    /**
+     * @brief Provides a default (de)serialiazer in case the intrusive method is used
      */
     template<typename Message, typename T>
     inline void serialize(Message &msg, T &t) {
         t.serialize(msg);
     }
 
-    /*!
-     * \brief Serializer for \c std::array<T, N> where \c is a serializable type
+    /**
+     * @brief Serializer for @c std::array<T, N> where @c is a serializable type
      *
      * This a simple example of custom type serialization.
      *
@@ -432,7 +432,7 @@ namespace xhal {
      *
      * Let's take an example :
      *
-     * \code{.cpp}
+     * @code{.cpp}
      * struct Point
      * {
      *     std::uint32_t x, y;
@@ -453,10 +453,10 @@ namespace xhal {
      *         msq & point.x & point.y;
      *     }
      * } }
-     * \endcode
+     * @endcode
      *
-     * \warning In order to work as intended the \c serialize functions \b MUST modify
-     * the object only with the \c operator&
+     * @warning In order to work as intended the @c serialize functions @b MUST modify
+     * the object only with the @c operator&
      */
     template<typename Message, typename T, std::size_t N>
     inline void serialize(Message &msg, std::array<T, N> &value) {
