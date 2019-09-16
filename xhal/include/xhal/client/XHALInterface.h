@@ -21,35 +21,33 @@
 
 #define XHAL_TRACE(MSG) LOG4CPLUS_TRACE(m_logger, MSG)
 #define XHAL_DEBUG(MSG) LOG4CPLUS_DEBUG(m_logger, MSG)
-#define XHAL_INFO(MSG) LOG4CPLUS_INFO(m_logger, MSG)
-#define XHAL_WARN(MSG) LOG4CPLUS_WARN(m_logger, MSG)
+#define XHAL_INFO(MSG)  LOG4CPLUS_INFO(m_logger, MSG)
+#define XHAL_WARN(MSG)  LOG4CPLUS_WARN(m_logger, MSG)
 #define XHAL_ERROR(MSG) LOG4CPLUS_ERROR(m_logger, MSG)
 #define XHAL_FATAL(MSG) LOG4CPLUS_FATAL(m_logger, MSG)
 
-#define STANDARD_CATCH \
-	catch (wisc::RPCSvc::NotConnectedException &e) { \
-		XHAL_ERROR("Caught NotConnectedException: " << e.message.c_str()); \
-    throw xhal::common::utils::XHALRPCNotConnectedException("RPC NotConnectedException: " + e.message);\
-	} \
-	catch (wisc::RPCSvc::RPCErrorException &e) { \
-		XHAL_ERROR("Caught RPCErrorException: " << e.message.c_str()); \
-    throw xhal::common::utils::XHALRPCException("RPC ErrorException: " + e.message);\
-	} \
-	catch (wisc::RPCSvc::RPCException &e) { \
-		XHAL_ERROR("Caught exception: " << e.message.c_str()); \
-    throw xhal::common::utils::XHALRPCException("RPC exception: " + e.message);\
-	} \
-  catch (wisc::RPCMsg::BadKeyException &e) { \
-    XHAL_ERROR("Caught exception: " << e.key.c_str()); \
-    throw xhal::common::utils::XHALRPCException("RPC BadKeyException (most probably remote register not accessible): " + e.key);\
-	}
+#define STANDARD_CATCH                                                                                                           \
+  catch (wisc::RPCSvc::NotConnectedException &e) {                                                                               \
+    XHAL_ERROR("Caught NotConnectedException: " << e.message.c_str());                                                           \
+    throw xhal::common::utils::XHALRPCNotConnectedException("RPC NotConnectedException: " + e.message);                          \
+  } catch (wisc::RPCSvc::RPCErrorException &e) {                                                                                 \
+    XHAL_ERROR("Caught RPCErrorException: " << e.message.c_str());                                                               \
+    throw xhal::common::utils::XHALRPCException("RPC ErrorException: " + e.message);                                             \
+  } catch (wisc::RPCSvc::RPCException &e) {                                                                                      \
+    XHAL_ERROR("Caught exception: " << e.message.c_str());                                                                       \
+    throw xhal::common::utils::XHALRPCException("RPC exception: " + e.message);                                                  \
+  } catch (wisc::RPCMsg::BadKeyException &e) {                                                                                   \
+    XHAL_ERROR("Caught exception: " << e.key.c_str());                                                                           \
+    throw xhal::common::utils::XHALRPCException("RPC BadKeyException (most probably remote register not accessible): " + e.key); \
+  }
 
-#define ASSERT(x) do { \
-		if (!(x)) { \
-			printf("Assertion Failed on line %u: %s\n", __LINE__, #x); \
-      throw xhal::common::utils::XHALException("ASSERT failure");\
-		} \
-	} while (0)
+#define ASSERT(x)                                                 \
+  do {                                                            \
+    if (!(x)) {                                                   \
+      printf("Assertion Failed on line %u: %s\n", __LINE__, #x);  \
+      throw xhal::common::utils::XHALException("ASSERT failure"); \
+    }                                                             \
+  } while (0)
 
 namespace xhal {
   namespace client {
@@ -65,6 +63,7 @@ namespace xhal {
          * @param board_domain_name domain name of CTP7
          */
         XHALInterface(const std::string& board_domain_name);
+
         /**
          * @brief Constructor, taking also the external logger
          * @param board_domain_name domain name of CTP7

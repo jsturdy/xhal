@@ -6,7 +6,12 @@
 namespace xhal {
   namespace client {
     namespace rpcman {
-      class VFAT3 : public xhal::client::XHALDevice {
+      /**
+      * @class VFAT3
+      * @brief Provides interface to call remote vfat3 methods
+      */
+      class VFAT3 : public xhal::client::XHALDevice
+      {
         public:
         /**
          * @brief Default constructor
@@ -16,13 +21,13 @@ namespace xhal {
          * @param address_table_filename XML address table file name
          */
         VFAT3(const std::string& board_domain_name, const std::string& address_table_filename);
-         
+
         //FIXME provide docs
         /**
          * @brief load configuration parameters to VFAT3 chips
          */
         uint32_t configureVFAT3s(uint32_t ohN, uint32_t vfatMask);
-  
+
         /**
          *  @brief reads channel registers of all unmasked vfats on ohN
          *  @param ohN Optohybrid optical link number
@@ -30,7 +35,7 @@ namespace xhal {
          *  @param chanRegData array pointer for channel register data with 3072 entries, the (vfat,chan) pairing determines the array index via: idx = vfat*128 + chan
          */
         uint32_t getChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatMask, uint32_t *chanRegData);
-  
+
         /**
          *  @brief sets all vfat3 channel registers
          *  @param ohN Optohybrid optical link number
@@ -43,7 +48,7 @@ namespace xhal {
          *  @param trimZCCPol as calEnable but for zero crossing comparator trim polarity
          */
         uint32_t setChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatMask, uint32_t *calEnable, uint32_t *masks, uint32_t *trimARM, uint32_t *trimARMPol, uint32_t *trimZCC, uint32_t *trimZCCPol);
-  
+
         /**
          *  @brief sets all vfat3 channel registers using a single channel register array
          *  @param ohN Optohybrid optical link number

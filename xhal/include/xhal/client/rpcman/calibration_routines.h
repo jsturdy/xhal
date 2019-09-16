@@ -8,7 +8,7 @@ namespace xhal {
     namespace rpcman {
       /**
       * @class CalRoutines
-      * @brief Provides interface to call remote utility methods 
+      * @brief Provides interface to call remote calibration_routines methods
       */
       class CalRoutines : public xhal::client::XHALInterface
       {
@@ -19,16 +19,20 @@ namespace xhal {
            * Loads the neccessary remote modules
            * @param board_domain_name domain name of CTP7
            */
-          CalRoutines(const std::string& board_domain_name):xhal::client::XHALInterface(board_domain_name){this->loadModule("calibration_routines", "calibration_routines v1.0.1");}
-  
-          ~CalRoutines(){}
-  
+          CalRoutines(const std::string& board_domain_name) :
+            xhal::client::XHALInterface(board_domain_name)
+          {
+            this->loadModule("calibration_routines", "calibration_routines v1.0.1");
+          }
+
+          ~CalRoutines() {}
+
           //FIXME Add documentation
           uint32_t checkSbitMappingWithCalPulse(uint32_t ohN, uint32_t vfatN, uint32_t mask, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t nevts, uint32_t L1Ainterval, uint32_t pulseDelay, uint32_t *data);
-  
+
           //FIXME Add documentation
           uint32_t checkSbitRateWithCalPulse(uint32_t ohN, uint32_t vfatN, uint32_t mask, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t waitTime, uint32_t pulseRate, uint32_t pulseDelay, uint32_t *outDataCTP7Rate, uint32_t *outDataFPGAClusterCntRate, uint32_t *outDataVFATSBits);
-  
+
           /**
            * @brief Runs a generic scan routine for a specific channel of a VFAT chip
            *
@@ -37,7 +41,7 @@ namespace xhal {
            * @param dacMin Min value of scanned variable
            * @param dacMax Max value of scanned variable
            * @param dacStep Step parameter
-           * @param ch VFAT channel 
+           * @param ch VFAT channel
            * @param useCalPulse Indicates whether to use internal calibration pulses
            * @param currentPulse Indicates whether to use current or voltage internal calibration pulse
            * @param calScaleFactor FIXME
@@ -48,7 +52,7 @@ namespace xhal {
            * @param result An array carrying scan results
            */
           uint32_t genScan(uint32_t nevts, uint32_t ohN, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t ch, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t mask, char * scanReg, bool useUltra, bool useExtTrig, uint32_t * result);
-  
+
           /**
            * @brief Runs a generic scan routine on all channels of a VFAT chip
            *
@@ -68,10 +72,10 @@ namespace xhal {
            */
           //FIXME Should we rearrange parameters so they are in the same order as in genScan?
           uint32_t genChannelScan(uint32_t nevts, uint32_t ohN, uint32_t mask, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, bool useExtTrig, char * scanReg, bool useUltra, uint32_t * result);
-  
+
           //FIXME Add documentation
           uint32_t sbitRateScan(uint32_t ohN, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t ch, uint32_t maskOh, bool invertVFATPos, char * scanReg, uint32_t waitTime, uint32_t * resultDacVal, uint32_t * resultTrigRate, uint32_t * resultTrigRatePerVFAT, bool isParallel);
-  
+
           /**
            * @brief configure TTC generator
            *
@@ -95,7 +99,7 @@ namespace xhal {
            *      enable = true (false) start (stop) the T1Controller for link ohN
            */
           uint32_t ttcGenConf(uint32_t ohN, uint32_t mode, uint32_t type, uint32_t pulseDelay, uint32_t L1Ainterval, uint32_t nPulses, bool enable);
-  
+
           /**
            * @brief Toggles TTC behavior
            *

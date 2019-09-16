@@ -6,7 +6,12 @@
 namespace xhal {
   namespace client {
     namespace rpcman {
-      class Optohybrid : public xhal::client::XHALDevice {
+      /**
+      * @class Optohybrid
+      * @brief Provides interface to call remote optohybrid methods
+      */
+      class Optohybrid : public xhal::client::XHALDevice
+      {
         public:
         /**
          * @brief Default constructor
@@ -16,7 +21,7 @@ namespace xhal {
          * @param address_table_filename XML address table file name
          */
         Optohybrid(const std::string& board_domain_name, const std::string& address_table_filename);
-  
+
         //FIXME provide documentation
         uint32_t broadcastRead(uint32_t ohN, char * regName, uint32_t vfatMask, uint32_t * result);
         uint32_t broadcastWrite(uint32_t ohN, char * regName, uint32_t value, uint32_t vfatMask);

@@ -12,7 +12,7 @@ namespace xhal {
     namespace rpcman {
       /**
       * @class Utils
-      * @brief Provides interface to call remote utility methods 
+      * @brief Provides interface to call remote utility methods
       */
       class Utils : public xhal::client::XHALInterface
       {
@@ -23,12 +23,18 @@ namespace xhal {
            * Loads the neccessary remote modules
            * @param board_domain_name domain name of CTP7
            */
-          Utils(const std::string& board_domain_name):xhal::client::XHALInterface(board_domain_name){this->loadModule("utils", "utils v1.0.1");}
-          ~Utils(){}
+          Utils(const std::string& board_domain_name) :
+            xhal::client::XHALInterface(board_domain_name)
+          {
+            this->loadModule("utils", "utils v1.0.1");
+          }
+
+          ~Utils() {}
+
           uint32_t update_atdb(char * xmlfilename);
           uint32_t getRegInfoDB(char * regName);
-      }; 
-   
+      };
+
     }
   }
 }
