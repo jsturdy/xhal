@@ -1,8 +1,8 @@
-#include "xhal/utils/XHALXMLParser.h"
+#include "xhal/common/utils/XHALXMLParser.h"
 
-int xhal::utils::XHALXMLParser::index = 0;
+int xhal::common::utils::XHALXMLParser::index = 0;
 
-xhal::utils::XHALXMLParser::XHALXMLParser(const std::string& xmlFile)
+xhal::common::utils::XHALXMLParser::XHALXMLParser(const std::string& xmlFile)
 {
   m_xmlFile = xmlFile;
   log4cplus::SharedAppenderPtr myAppender(new log4cplus::ConsoleAppender());
@@ -16,13 +16,13 @@ xhal::utils::XHALXMLParser::XHALXMLParser(const std::string& xmlFile)
   m_nodes = new std::unordered_map<std::string,Node>();
 }
 
-xhal::utils::XHALXMLParser::~XHALXMLParser()
+xhal::common::utils::XHALXMLParser::~XHALXMLParser()
 {
   if (m_nodes) delete m_nodes;
   m_logger.shutdown();
 }
 
-void xhal::utils::XHALXMLParser::setLogLevel(int loglevel)
+void xhal::common::utils::XHALXMLParser::setLogLevel(int loglevel)
 {
   switch(loglevel)
   {
@@ -44,7 +44,7 @@ void xhal::utils::XHALXMLParser::setLogLevel(int loglevel)
   }
 }
 
-void xhal::utils::XHALXMLParser::parseXML()
+void xhal::common::utils::XHALXMLParser::parseXML()
 {
   //
   /// Initialize XML4C system
@@ -55,7 +55,7 @@ void xhal::utils::XHALXMLParser::parseXML()
     XHAL_ERROR("Error during Xerces-c Initialization." << std::endl
           << "  Exception message:"
           << xercesc::XMLString::transcode(toCatch.getMessage()));
-    throw xhal::utils::XHALXMLParserException("XHALParser: initialization failed");
+    throw xhal::common::utils::XHALXMLParserException("XHALParser: initialization failed");
     return;
   }
 
@@ -124,14 +124,14 @@ void xhal::utils::XHALXMLParser::parseXML()
     makeTree(m_root,"",0x0,m_nodes,NULL,m_vars,false);
     XHAL_DEBUG("Number of nodes: " << m_nodes->size());
   } else{
-    throw xhal::utils::XHALXMLParserException("XHALParser: an error occured during parsing");
+    throw xhal::common::utils::XHALXMLParserException("XHALParser: an error occured during parsing");
   }
   XHAL_DEBUG("Parsing done!");
   if (parser) parser->release();
   xercesc::XMLPlatformUtils::Terminate();
 }
 
-void xhal::utils::XHALXMLParser::makeTree(xercesc::DOMNode * node, std::string baseName, uint32_t baseAddress, std::unordered_map<std::string, Node> * nodes, Node * parentNode, std::unordered_map<std::string, int> vars, bool isGenerated)
+void xhal::common::utils::XHALXMLParser::makeTree(xercesc::DOMNode * node, std::string baseName, uint32_t baseAddress, std::unordered_map<std::string, Node> * nodes, Node * parentNode, std::unordered_map<std::string, int> vars, bool isGenerated)
 {
   XHAL_DEBUG("Call makeTree");
   unsigned int generateSize;
@@ -240,9 +240,9 @@ void xhal::utils::XHALXMLParser::makeTree(xercesc::DOMNode * node, std::string b
 }
 
 #ifdef __ARM_ARCH_7A__
-std::experimental::optional<std::string> xhal::utils::XHALXMLParser::getAttVal(xercesc::DOMNode * t_node_, const char * attname)
+std::experimental::optional<std::string> xhal::common::utils::XHALXMLParser::getAttVal(xercesc::DOMNode * t_node_, const char * attname)
 #else
-boost::optional<std::string> xhal::utils::XHALXMLParser::getAttVal(xercesc::DOMNode * t_node_, const char * attname)
+boost::optional<std::string> xhal::common::utils::XHALXMLParser::getAttVal(xercesc::DOMNode * t_node_, const char * attname)
 #endif
 {
   XHAL_TRACE("Call getAttVal for attribute " << attname);
@@ -268,7 +268,7 @@ boost::optional<std::string> xhal::utils::XHALXMLParser::getAttVal(xercesc::DOMN
   }
 }
 
-unsigned int xhal::utils::XHALXMLParser::parseInt(std::string & s)
+unsigned int xhal::common::utils::XHALXMLParser::parseInt(std::string & s)
 {
   XHAL_TRACE("Call parseInt for argument " << s);
   std::stringstream converter(s);
@@ -287,7 +287,7 @@ unsigned int xhal::utils::XHALXMLParser::parseInt(std::string & s)
   }
 }
 
-std::string xhal::utils::XHALXMLParser::substituteVars(std::string & s, std::unordered_map<std::string, int> dict)
+std::string xhal::common::utils::XHALXMLParser::substituteVars(std::string & s, std::unordered_map<std::string, int> dict)
 {
   if (s == "") {return s;}
   std::string ret;
@@ -299,7 +299,7 @@ std::string xhal::utils::XHALXMLParser::substituteVars(std::string & s, std::uno
   return ret;
 }
 
-std::string xhal::utils::XHALXMLParser::replaceAll( std::string const& original, std::string const& from, std::string const& to )
+std::string xhal::common::utils::XHALXMLParser::replaceAll( std::string const& original, std::string const& from, std::string const& to )
 {
     std::string results;
     std::string::const_iterator end = original.end();
@@ -316,9 +316,9 @@ std::string xhal::utils::XHALXMLParser::replaceAll( std::string const& original,
 }
 
 #ifdef __ARM_ARCH_7A__
-std::experimental::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNode(const char* nodeName)
+std::experimental::optional<xhal::common::utils::Node> xhal::common::utils::XHALXMLParser::getNode(const char* nodeName)
 #else
-boost::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNode(const char* nodeName)
+boost::optional<xhal::common::utils::Node> xhal::common::utils::XHALXMLParser::getNode(const char* nodeName)
 #endif
 {
   XHAL_DEBUG("Call getNode for argument " << nodeName);
@@ -335,9 +335,9 @@ boost::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNode(const cha
 
 // Not used a.t.m. Do we need it? FIXME
 #ifdef __ARM_ARCH_7A__
-std::experimental::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNodeFromAddress(const uint32_t nodeAddress)
+std::experimental::optional<xhal::common::utils::Node> xhal::common::utils::XHALXMLParser::getNodeFromAddress(const uint32_t nodeAddress)
 #else
-boost::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNodeFromAddress(const uint32_t nodeAddress)
+boost::optional<xhal::common::utils::Node> xhal::common::utils::XHALXMLParser::getNodeFromAddress(const uint32_t nodeAddress)
 #endif
 {
   //Node * res = NULL;
@@ -358,7 +358,7 @@ boost::optional<xhal::utils::Node> xhal::utils::XHALXMLParser::getNodeFromAddres
 
 }
 
-std::unordered_map<std::string,xhal::utils::Node> xhal::utils::XHALXMLParser::getAllNodes()
+std::unordered_map<std::string,xhal::common::utils::Node> xhal::common::utils::XHALXMLParser::getAllNodes()
 {
   return *m_nodes;
 }
