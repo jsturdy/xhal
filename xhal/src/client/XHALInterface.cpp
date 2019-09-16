@@ -1,8 +1,8 @@
-#include "xhal/XHALInterface.h"
+#include "xhal/client/XHALInterface.h"
 
-int xhal::XHALInterface::index = 0;
+int xhal::client::XHALInterface::index = 0;
 
-xhal::XHALInterface::XHALInterface(const std::string& board_domain_name):
+xhal::client::XHALInterface::XHALInterface(const std::string& board_domain_name):
   m_board_domain_name(board_domain_name),
   isConnected(false)
 {
@@ -21,12 +21,12 @@ xhal::XHALInterface::XHALInterface(const std::string& board_domain_name):
     this->connect();
     XHAL_INFO("XHAL Interface connected");
   }
-  catch (xhal::utils::XHALRPCException &e) {
+  catch (xhal::common::utils::XHALRPCException &e) {
     XHAL_INFO("XHAL Interface failed to connect");
   }
 }
 
-xhal::XHALInterface::XHALInterface(const std::string& board_domain_name, log4cplus::Logger& logger):
+xhal::client::XHALInterface::XHALInterface(const std::string& board_domain_name, log4cplus::Logger& logger):
   m_board_domain_name(board_domain_name),
   m_logger(logger),
   isConnected(false)
@@ -38,20 +38,20 @@ xhal::XHALInterface::XHALInterface(const std::string& board_domain_name, log4cpl
     this->connect();
     XHAL_INFO("XHAL Interface connected");
   }
-  catch (xhal::utils::XHALRPCException &e) {
+  catch (xhal::common::utils::XHALRPCException &e) {
     XHAL_INFO("XHAL Interface failed to connect");
     isConnected = false;
   }
 }
 
-xhal::XHALInterface::~XHALInterface()
+xhal::client::XHALInterface::~XHALInterface()
 {
   XHAL_DEBUG("XHAL destructor called");
   this->disconnect();
   //m_logger.shutdown();
 }
 
-void xhal::XHALInterface::connect()
+void xhal::client::XHALInterface::connect()
 {
   try {
     rpc.connect(m_board_domain_name);
@@ -60,20 +60,20 @@ void xhal::XHALInterface::connect()
   }
   catch (wisc::RPCSvc::ConnectionFailedException &e) {
     XHAL_ERROR("Caught RPCErrorException: " << e.message.c_str());
-    throw xhal::utils::XHALRPCException("RPC ConnectionFailedException: " + e.message);
+    throw xhal::common::utils::XHALRPCException("RPC ConnectionFailedException: " + e.message);
   }
   catch (wisc::RPCSvc::RPCException &e) {
     XHAL_ERROR("Caught exception: " << e.message.c_str());
-    throw xhal::utils::XHALRPCException("RPC exception: " + e.message);
+    throw xhal::common::utils::XHALRPCException("RPC exception: " + e.message);
   }
 }
 
-void xhal::XHALInterface::reconnect()
+void xhal::client::XHALInterface::reconnect()
 {
   this->connect();
 }
 
-void xhal::XHALInterface::disconnect()
+void xhal::client::XHALInterface::disconnect()
 {
   try {
     rpc.disconnect();
@@ -85,11 +85,11 @@ void xhal::XHALInterface::disconnect()
   }
   catch (wisc::RPCSvc::RPCException &e) {
     XHAL_ERROR("Caught exception: " << e.message.c_str());
-    throw xhal::utils::XHALRPCException("RPC exception: " + e.message);
+    throw xhal::common::utils::XHALRPCException("RPC exception: " + e.message);
   }
 }
 
-void xhal::XHALInterface::loadModule(const std::string& module_name, const std::string& module_version)
+void xhal::client::XHALInterface::loadModule(const std::string& module_name, const std::string& module_version)
 {
   try {
     ASSERT(rpc.load_module(module_name, module_version));
@@ -97,7 +97,7 @@ void xhal::XHALInterface::loadModule(const std::string& module_name, const std::
   STANDARD_CATCH;
 }
 
-void xhal::XHALInterface::setLogLevel(int loglevel)
+void xhal::client::XHALInterface::setLogLevel(int loglevel)
 {
   switch(loglevel)
   {

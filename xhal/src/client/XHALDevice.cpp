@@ -1,12 +1,12 @@
-#include "xhal/XHALDevice.h"
+#include "xhal/client/XHALDevice.h"
 
-xhal::XHALDevice::XHALDevice(const std::string& board_domain_name, const std::string& address_table_filename): 
-  xhal::XHALInterface(board_domain_name),
+xhal::client::XHALDevice::XHALDevice(const std::string& board_domain_name, const std::string& address_table_filename): 
+  xhal::client::XHALInterface(board_domain_name),
   m_address_table_filename(address_table_filename)
 {
   //FIXME Implement try-catch
   XHAL_DEBUG("Address table name " << m_address_table_filename);
-  m_parser = new xhal::utils::XHALXMLParser(m_address_table_filename);
+  m_parser = new xhal::common::utils::XHALXMLParser(m_address_table_filename);
   XHAL_DEBUG("XHALXML parser created");
   m_parser->setLogLevel(2);
   m_parser->parseXML();
@@ -14,7 +14,7 @@ xhal::XHALDevice::XHALDevice(const std::string& board_domain_name, const std::st
   this->loadModule("extras","extras v1.0.1");
 }
 
-void xhal::XHALDevice::reconnect()
+void xhal::client::XHALDevice::reconnect()
 {
   if (!isConnected){
     this->connect();
@@ -22,11 +22,11 @@ void xhal::XHALDevice::reconnect()
     this->loadModule("extras","extras v1.0.1");
   } else {
     XHAL_ERROR("Interface already connected. Reconnection failed");
-    throw xhal::utils::XHALRPCException("RPC exception: Interface already connected. Reconnection failed");
+    throw xhal::common::utils::XHALRPCException("RPC exception: Interface already connected. Reconnection failed");
   }
 }
 
-uint32_t xhal::XHALDevice::readReg(std::string regName)
+uint32_t xhal::client::XHALDevice::readReg(std::string regName)
 {
   if (auto t_node = m_parser->getNode(regName.c_str()))
   {
@@ -42,7 +42,7 @@ uint32_t xhal::XHALDevice::readReg(std::string regName)
     if (rsp.get_key_exists("error"))
     {
       XHAL_ERROR("RPC response returned error, readReg failed"); 
-      throw xhal::utils::XHALException("Error during register access");
+      throw xhal::common::utils::XHALException("Error during register access");
     } else {
       try{
         ASSERT(rsp.get_word_array_size("data") == 1);
@@ -68,12 +68,12 @@ uint32_t xhal::XHALDevice::readReg(std::string regName)
     return result;
   } else {
     XHAL_ERROR("Register not found in address table!");
-    throw xhal::utils::XHALXMLParserException(strcat("XHAL XML exception: can't find node", regName.c_str()));
+    throw xhal::common::utils::XHALXMLParserException(strcat("XHAL XML exception: can't find node", regName.c_str()));
   }
 }
 
 // In current shape implements raw address reading... Should the signature be update? FIXME
-uint32_t xhal::XHALDevice::readReg(uint32_t address)
+uint32_t xhal::client::XHALDevice::readReg(uint32_t address)
 {
   req = wisc::RPCMsg("memory.read");
   req.set_word("address", address);
@@ -86,7 +86,7 @@ uint32_t xhal::XHALDevice::readReg(uint32_t address)
   if (rsp.get_key_exists("error"))
   {
     XHAL_ERROR("RPC response returned error, readReg failed"); 
-    throw xhal::utils::XHALException("Error during register access");
+    throw xhal::common::utils::XHALException("Error during register access");
   } else {
     try{
       ASSERT(rsp.get_word_array_size("data") == 1);
@@ -108,7 +108,7 @@ uint32_t xhal::XHALDevice::readReg(uint32_t address)
   return result;
 }
 
-void xhal::XHALDevice::writeReg(std::string regName, uint32_t value)
+void xhal::client::XHALDevice::writeReg(std::string regName, uint32_t value)
 {
   if (auto t_node = m_parser->getNode(regName.c_str()))
   {
@@ -126,7 +126,7 @@ void xhal::XHALDevice::writeReg(std::string regName, uint32_t value)
       if (rsp.get_key_exists("error"))
       {
         XHAL_ERROR("RPC response returned error, writeReg failed"); 
-        throw xhal::utils::XHALException("Error during register access");
+        throw xhal::common::utils::XHALException("Error during register access");
       }
     } else {
       uint32_t current_val = this->readReg(m_node.real_address);
@@ -154,16 +154,16 @@ void xhal::XHALDevice::writeReg(std::string regName, uint32_t value)
       if (rsp.get_key_exists("error"))
       {
         XHAL_ERROR("RPC response returned error, writeReg failed"); 
-        throw xhal::utils::XHALException("Error during register access");
+        throw xhal::common::utils::XHALException("Error during register access");
       }
     }
   } else {
     XHAL_ERROR("Register not found in address table!");
-    throw xhal::utils::XHALXMLParserException(strcat("XHAL XML exception: can't find node", regName.c_str()));
+    throw xhal::common::utils::XHALXMLParserException(strcat("XHAL XML exception: can't find node", regName.c_str()));
   }
 }
 
-uint32_t xhal::XHALDevice::getList(uint32_t* addresses, uint32_t* result, ssize_t size)
+uint32_t xhal::client::XHALDevice::getList(uint32_t* addresses, uint32_t* result, ssize_t size)
 {
     req = wisc::RPCMsg("extras.listread");
     req.set_word_array("addresses", addresses,size);
@@ -185,7 +185,7 @@ uint32_t xhal::XHALDevice::getList(uint32_t* addresses, uint32_t* result, ssize_
     return 0;
 }
 
-uint32_t xhal::XHALDevice::getBlock(uint32_t address, uint32_t* result, ssize_t size)
+uint32_t xhal::client::XHALDevice::getBlock(uint32_t address, uint32_t* result, ssize_t size)
 {
     req = wisc::RPCMsg("extras.blockread");
     req.set_word("address", address);
