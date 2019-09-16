@@ -1,9 +1,9 @@
 #include <boost/python.hpp>
-#include "xhal/utils/Exception.h"
-#include "xhal/XHALDevice.h"
-#include "xhal/utils/PyTypes.h"
-#include "xhal/rpc/daq_monitor.h"
-#include "xhal/rpc/utils.h"
+#include "xhal/common/utils/Exception.h"
+#include "xhal/client/XHALDevice.h"
+#include "xhal/client/utils/PyTypes.h"
+#include "xhal/client/rpcman/daq_monitor.h"
+#include "xhal/client/rpcman/utils.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
@@ -37,14 +37,14 @@ inline void TRANSLATOR_NAME(EXCEPTION_NAME const& e)                            
 }                                                                    
 #endif
 
-PY_EXCEPTION_TRANSLATOR(translate_XHALException,xhal::utils::XHALException, obj_XHALException)
-PY_EXCEPTION_TRANSLATOR(translate_XHALXMLParserException,xhal::utils::XHALXMLParserException, obj_XHALXMLParserException)
-PY_EXCEPTION_TRANSLATOR(translate_XHALRPCException,xhal::utils::XHALRPCException, obj_XHALRPCException)
-PY_EXCEPTION_TRANSLATOR(translate_XHALRPCNotConnectedException,xhal::utils::XHALRPCNotConnectedException, obj_XHALRPCNotConnectedException)
+PY_EXCEPTION_TRANSLATOR(translate_XHALException,xhal::common::utils::XHALException, obj_XHALException)
+PY_EXCEPTION_TRANSLATOR(translate_XHALXMLParserException,xhal::common::utils::XHALXMLParserException, obj_XHALXMLParserException)
+PY_EXCEPTION_TRANSLATOR(translate_XHALRPCException,xhal::common::utils::XHALRPCException, obj_XHALRPCException)
+PY_EXCEPTION_TRANSLATOR(translate_XHALRPCNotConnectedException,xhal::common::utils::XHALRPCNotConnectedException, obj_XHALRPCNotConnectedException)
 
 // https://stackoverflow.com/questions/7577410/boost-python-select-between-overloaded-methods
-uint32_t (xhal::XHALDevice::*readReg_byname)(std::string regName) = &xhal::XHALDevice::readReg;
-uint32_t (xhal::XHALDevice::*readReg_byaddress)(uint32_t address) = &xhal::XHALDevice::readReg;
+uint32_t (xhal::client::XHALDevice::*readReg_byname)(std::string regName) = &xhal::client::XHALDevice::readReg;
+uint32_t (xhal::client::XHALDevice::*readReg_byaddress)(uint32_t address) = &xhal::client::XHALDevice::readReg;
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getmonTRIGGERmain_overloads, getmonTRIGGERmain, 0, 1)
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getmonTRIGGEROHmain_overloads, getmonTRIGGEROHmain, 0, 1)
@@ -52,43 +52,43 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getmonDAQOHmain_overloads, getmonDAQOHmai
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(getmonOHmain_overloads, getmonOHmain, 0, 1)
 
 BOOST_PYTHON_MODULE(xhalpy){
-  using namespace boost::python;
-  
-  obj_XHALException = createExceptionClass("XHALException");
-  obj_XHALXMLParserException = createExceptionClass("XHALXMLParserException");
-  obj_XHALRPCException = createExceptionClass("XHALRPCException");
-  obj_XHALRPCNotConnectedException = createExceptionClass("XHALRPCNotConnectedException");
+    using namespace boost::python;
 
-  register_exception_translator<xhal::utils::XHALException>(&translate_XHALException);
-  register_exception_translator<xhal::utils::XHALXMLParserException>(&translate_XHALXMLParserException);
-  register_exception_translator<xhal::utils::XHALRPCException>(&translate_XHALRPCException);
-  register_exception_translator<xhal::utils::XHALRPCNotConnectedException>(&translate_XHALRPCNotConnectedException);
+    obj_XHALException = createExceptionClass("XHALException");
+    obj_XHALXMLParserException = createExceptionClass("XHALXMLParserException");
+    obj_XHALRPCException = createExceptionClass("XHALRPCException");
+    obj_XHALRPCNotConnectedException = createExceptionClass("XHALRPCNotConnectedException");
 
-  class_<xhal::XHALDevice>("XHALDevice", init<const std::string&, const std::string&>())
-    .def("connect",&xhal::XHALDevice::connect)
-    .def("reconnect",&xhal::XHALDevice::reconnect)
-    .def("disconnect",&xhal::XHALDevice::disconnect)
-    .def("loadModule",&xhal::XHALDevice::loadModule)
-    .def("setLogLevel",&xhal::XHALDevice::setLogLevel)
-    .def("readReg",readReg_byname)
-    .def("readReg",readReg_byaddress)
-    .def("writeReg",&xhal::XHALDevice::writeReg);
-  
-  class_<PyListUint32>("PyListUint32")
-    .def(vector_indexing_suite<PyListUint32>() );
+    register_exception_translator<xhal::common::utils::XHALException>(&translate_XHALException);
+    register_exception_translator<xhal::common::utils::XHALXMLParserException>(&translate_XHALXMLParserException);
+    register_exception_translator<xhal::common::utils::XHALRPCException>(&translate_XHALRPCException);
+    register_exception_translator<xhal::common::utils::XHALRPCNotConnectedException>(&translate_XHALRPCNotConnectedException);
 
-  class_<PyDictVecUint32>("PyDictVecUint32")
-    .def(map_indexing_suite<PyDictVecUint32>() );
+    class_<xhal::client::XHALDevice>("XHALDevice", init<const std::string&, const std::string&>())
+        .def("connect",&xhal::client::XHALDevice::connect)
+        .def("reconnect",&xhal::client::XHALDevice::reconnect)
+        .def("disconnect",&xhal::client::XHALDevice::disconnect)
+        .def("loadModule",&xhal::client::XHALDevice::loadModule)
+        .def("setLogLevel",&xhal::client::XHALDevice::setLogLevel)
+        .def("readReg",readReg_byname)
+        .def("readReg",readReg_byaddress)
+        .def("writeReg",&xhal::client::XHALDevice::writeReg);
 
-  class_<xhal::rpc::Utils>("Utils", init<const std::string&>())
-    .def("update_atdb",&xhal::rpc::Utils::update_atdb)
-    .def("getRegInfoDB",&xhal::rpc::Utils::getRegInfoDB);
+    class_<PyListUint32>("PyListUint32")
+        .def(vector_indexing_suite<PyListUint32>() );
 
-  class_<xhal::rpc::DaqMonitor>("DaqMonitor", init<const std::string&>())
-    .def("getmonTTCmain",&xhal::rpc::DaqMonitor::getmonTTCmain)
-    .def("getmonTRIGGERmain",&xhal::rpc::DaqMonitor::getmonTRIGGERmain,getmonTRIGGERmain_overloads())
-    .def("getmonTRIGGEROHmain",&xhal::rpc::DaqMonitor::getmonTRIGGEROHmain,getmonTRIGGEROHmain_overloads())
-    .def("getmonDAQOHmain",&xhal::rpc::DaqMonitor::getmonDAQOHmain,getmonDAQOHmain_overloads())
-    .def("getmonOHmain",&xhal::rpc::DaqMonitor::getmonOHmain,getmonOHmain_overloads())
-    .def("getmonDAQmain",&xhal::rpc::DaqMonitor::getmonDAQmain);
+    class_<PyDictVecUint32>("PyDictVecUint32")
+        .def(map_indexing_suite<PyDictVecUint32>() );
+
+    class_<xhal::client::rpcman::Utils>("Utils", init<const std::string&>())
+        .def("update_atdb",&xhal::client::rpcman::Utils::update_atdb)
+        .def("getRegInfoDB",&xhal::client::rpcman::Utils::getRegInfoDB);
+
+    class_<xhal::client::rpcman::DaqMonitor>("DaqMonitor", init<const std::string&>())
+        .def("getmonTTCmain",&xhal::client::rpcman::DaqMonitor::getmonTTCmain)
+        .def("getmonTRIGGERmain",&xhal::client::rpcman::DaqMonitor::getmonTRIGGERmain,getmonTRIGGERmain_overloads())
+        .def("getmonTRIGGEROHmain",&xhal::client::rpcman::DaqMonitor::getmonTRIGGEROHmain,getmonTRIGGEROHmain_overloads())
+        .def("getmonDAQOHmain",&xhal::client::rpcman::DaqMonitor::getmonDAQOHmain,getmonDAQOHmain_overloads())
+        .def("getmonOHmain",&xhal::client::rpcman::DaqMonitor::getmonOHmain,getmonOHmain_overloads())
+        .def("getmonDAQmain",&xhal::client::rpcman::DaqMonitor::getmonDAQmain);
 }
