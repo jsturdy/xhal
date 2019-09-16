@@ -1,6 +1,6 @@
-#include "xhal/rpc/calibration_routines.h"
+#include "xhal/client/rpcman/calibration_routines.h"
 
-uint32_t xhal::rpc::CalRoutines::checkSbitMappingWithCalPulse(uint32_t ohN, uint32_t vfatN, uint32_t mask, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t nevts, uint32_t L1Ainterval, uint32_t pulseDelay, uint32_t *data)
+uint32_t xhal::client::rpcman::CalRoutines::checkSbitMappingWithCalPulse(uint32_t ohN, uint32_t vfatN, uint32_t mask, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t nevts, uint32_t L1Ainterval, uint32_t pulseDelay, uint32_t *data)
 {
     req = wisc::RPCMsg("calibration_routines.checkSbitMappingWithCalPulse");
 
@@ -35,9 +35,9 @@ uint32_t xhal::rpc::CalRoutines::checkSbitMappingWithCalPulse(uint32_t ohN, uint
     }
 
     return 0;
-} //End checkSbitMappingWithCalPulse()
+}
 
-uint32_t xhal::rpc::CalRoutines::checkSbitRateWithCalPulse(uint32_t ohN, uint32_t vfatN, uint32_t mask, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t waitTime, uint32_t pulseRate, uint32_t pulseDelay, uint32_t *outDataCTP7Rate, uint32_t *outDataFPGAClusterCntRate, uint32_t *outDataVFATSBits)
+uint32_t xhal::client::rpcman::CalRoutines::checkSbitRateWithCalPulse(uint32_t ohN, uint32_t vfatN, uint32_t mask, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t waitTime, uint32_t pulseRate, uint32_t pulseDelay, uint32_t *outDataCTP7Rate, uint32_t *outDataFPGAClusterCntRate, uint32_t *outDataVFATSBits)
 {
     req = wisc::RPCMsg("calibration_routines.checkSbitRateWithCalPulse");
 
@@ -90,9 +90,9 @@ uint32_t xhal::rpc::CalRoutines::checkSbitRateWithCalPulse(uint32_t ohN, uint32_
     }
 
     return 0;
-} //End checkSbitRateWithCalPulse()
+}
 
-uint32_t xhal::rpc::CalRoutines::genScan(uint32_t nevts, uint32_t ohN, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t ch, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t mask, char * scanReg, bool useUltra, bool useExtTrig, uint32_t * result)
+uint32_t xhal::client::rpcman::CalRoutines::genScan(uint32_t nevts, uint32_t ohN, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t ch, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, uint32_t mask, char * scanReg, bool useUltra, bool useExtTrig, uint32_t * result)
 {
     req = wisc::RPCMsg("calibration_routines.genScan");
 
@@ -133,7 +133,7 @@ uint32_t xhal::rpc::CalRoutines::genScan(uint32_t nevts, uint32_t ohN, uint32_t 
     return 0;
 }
 
-uint32_t xhal::rpc::CalRoutines::genChannelScan(uint32_t nevts, uint32_t ohN, uint32_t mask, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, bool useExtTrig, char * scanReg, bool useUltra, uint32_t * result)
+uint32_t xhal::client::rpcman::CalRoutines::genChannelScan(uint32_t nevts, uint32_t ohN, uint32_t mask, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, bool useCalPulse, bool currentPulse, uint32_t calScaleFactor, bool useExtTrig, char * scanReg, bool useUltra, uint32_t * result)
 {
     req = wisc::RPCMsg("calibration_routines.genChannelScan");
 
@@ -171,9 +171,9 @@ uint32_t xhal::rpc::CalRoutines::genChannelScan(uint32_t nevts, uint32_t ohN, ui
     }
 
     return 0;
-} //End genChannelScan()
+}
 
-uint32_t xhal::rpc::CalRoutines::sbitRateScan(uint32_t ohN, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t ch, uint32_t maskOh, bool invertVFATPos, char * scanReg, uint32_t waitTime, uint32_t * resultDacVal, uint32_t * resultTrigRate, uint32_t * resultTrigRatePerVFAT, bool isParallel)
+uint32_t xhal::client::rpcman::CalRoutines::sbitRateScan(uint32_t ohN, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t ch, uint32_t maskOh, bool invertVFATPos, char * scanReg, uint32_t waitTime, uint32_t * resultDacVal, uint32_t * resultTrigRate, uint32_t * resultTrigRatePerVFAT, bool isParallel)
 {
     req = wisc::RPCMsg("calibration_routines.sbitRateScan");
 
@@ -234,9 +234,9 @@ uint32_t xhal::rpc::CalRoutines::sbitRateScan(uint32_t ohN, uint32_t dacMin, uin
     }
 
     return 0;
-} //End sbitRateScan(...)
+}
 
-uint32_t xhal::rpc::CalRoutines::ttcGenConf(uint32_t ohN, uint32_t mode, uint32_t type, uint32_t pulseDelay, uint32_t L1Ainterval, uint32_t nPulses, bool enable)
+uint32_t xhal::client::rpcman::CalRoutines::ttcGenConf(uint32_t ohN, uint32_t mode, uint32_t type, uint32_t pulseDelay, uint32_t L1Ainterval, uint32_t nPulses, bool enable)
 {
 
     req = wisc::RPCMsg("calibration_routines.ttcGenConf");
@@ -258,7 +258,7 @@ uint32_t xhal::rpc::CalRoutines::ttcGenConf(uint32_t ohN, uint32_t mode, uint32_
     return 0;
 }
 
-uint32_t xhal::rpc::CalRoutines::ttcGenToggle(uint32_t ohN, bool enable)
+uint32_t xhal::client::rpcman::CalRoutines::ttcGenToggle(uint32_t ohN, bool enable)
 {
     req = wisc::RPCMsg("calibration_routines.ttcGenToggle");
     req.set_word("ohN", ohN);
@@ -272,4 +272,4 @@ uint32_t xhal::rpc::CalRoutines::ttcGenToggle(uint32_t ohN, bool enable)
         return 1;
     }
     return 0;
-} //End ttcGenToggle(...)
+}

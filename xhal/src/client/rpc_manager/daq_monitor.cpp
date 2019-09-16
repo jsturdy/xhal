@@ -1,6 +1,6 @@
-#include "xhal/rpc/daq_monitor.h"
+#include "xhal/client/rpcman/daq_monitor.h"
 
-PyListUint32 xhal::rpc::DaqMonitor::getmonTTCmain()
+PyListUint32 xhal::client::rpcman::DaqMonitor::getmonTTCmain()
 {
     PyListUint32 result;
     req = wisc::RPCMsg("amc.getmonTTCmain");
@@ -26,7 +26,7 @@ PyListUint32 xhal::rpc::DaqMonitor::getmonTTCmain()
     return result;
 }
 
-PyListUint32 xhal::rpc::DaqMonitor::getmonTRIGGERmain(uint32_t noh)
+PyListUint32 xhal::client::rpcman::DaqMonitor::getmonTRIGGERmain(uint32_t noh)
 {
     PyListUint32 result;
     req = wisc::RPCMsg("amc.getmonTRIGGERmain");
@@ -53,7 +53,7 @@ PyListUint32 xhal::rpc::DaqMonitor::getmonTRIGGERmain(uint32_t noh)
     return result;
 }
 
-PyListUint32 xhal::rpc::DaqMonitor::getmonTRIGGEROHmain(uint32_t noh)
+PyListUint32 xhal::client::rpcman::DaqMonitor::getmonTRIGGEROHmain(uint32_t noh)
 {
     PyListUint32 result(8*noh,0);
     req = wisc::RPCMsg("amc.getmonTRIGGEROHmain");
@@ -93,7 +93,7 @@ PyListUint32 xhal::rpc::DaqMonitor::getmonTRIGGEROHmain(uint32_t noh)
     return result;
 }
 
-PyListUint32 xhal::rpc::DaqMonitor::getmonDAQmain()
+PyListUint32 xhal::client::rpcman::DaqMonitor::getmonDAQmain()
 {
     PyListUint32 result;
     req = wisc::RPCMsg("amc.getmonDAQmain");
@@ -122,7 +122,7 @@ PyListUint32 xhal::rpc::DaqMonitor::getmonDAQmain()
     return result;
 }
 
-PyListUint32 xhal::rpc::DaqMonitor::getmonDAQOHmain(uint32_t noh)
+PyListUint32 xhal::client::rpcman::DaqMonitor::getmonDAQOHmain(uint32_t noh)
 {
     PyListUint32 result(6*noh,0);
     req = wisc::RPCMsg("amc.getmonDAQOHmain");
@@ -158,7 +158,7 @@ PyListUint32 xhal::rpc::DaqMonitor::getmonDAQOHmain(uint32_t noh)
     return result;
 }
 
-PyListUint32 xhal::rpc::DaqMonitor::getmonOHmain(uint32_t noh)
+PyListUint32 xhal::client::rpcman::DaqMonitor::getmonOHmain(uint32_t noh)
 {
     PyListUint32 result(7*noh,0);
     req = wisc::RPCMsg("amc.getmonOHmain");

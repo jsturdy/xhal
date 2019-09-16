@@ -1,6 +1,6 @@
-#include "xhal/rpc/utils.h"
+#include "xhal/client/rpcman/utils.h"
 
-uint32_t xhal::rpc::Utils::update_atdb(char * xmlfilename)
+uint32_t xhal::client::rpcman::Utils::update_atdb(char * xmlfilename)
 {
     req = wisc::RPCMsg("utils.update_address_table");
     req.set_string("at_xml", xmlfilename);
@@ -11,12 +11,12 @@ uint32_t xhal::rpc::Utils::update_atdb(char * xmlfilename)
 
     if (rsp.get_key_exists("error")) {
         XHAL_ERROR("Address table update failed!");
-        throw xhal::utils::XHALException("Error during address table update");
+        throw xhal::common::utils::XHALException("Error during address table update");
     }
     return 0;
 }
 
-uint32_t xhal::rpc::Utils::getRegInfoDB(char * regName)
+uint32_t xhal::client::rpcman::Utils::getRegInfoDB(char * regName)
 {
     uint32_t address, mask;
     std::string permissions;

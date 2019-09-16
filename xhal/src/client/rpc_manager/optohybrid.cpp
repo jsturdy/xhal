@@ -1,12 +1,12 @@
-#include "xhal/rpc/optohybrid.h"
+#include "xhal/client/rpcman/optohybrid.h"
 
-xhal::rpc::Optohybrid::Optohybrid(const std::string& board_domain_name, const std::string& address_table_filename):
-  xhal::XHALDevice(board_domain_name, address_table_filename)
+xhal::client::rpcman::Optohybrid::Optohybrid(const std::string& board_domain_name, const std::string& address_table_filename) :
+    xhal::client::XHALDevice(board_domain_name, address_table_filename)
 {
   this->loadModule("optohybrid","optohybrid v1.0.1");
 }
 
-uint32_t xhal::rpc::Optohybrid::broadcastRead(uint32_t ohN, char * regName, uint32_t vfatMask, uint32_t * result)
+uint32_t xhal::client::rpcman::Optohybrid::broadcastRead(uint32_t ohN, char * regName, uint32_t vfatMask, uint32_t * result)
 {
     /* User supplies the VFAT node name as reg_name, examples:
      *
@@ -40,9 +40,9 @@ uint32_t xhal::rpc::Optohybrid::broadcastRead(uint32_t ohN, char * regName, uint
         return 1;
     }
     return 0;
-} //End broadcastRead
+}
 
-uint32_t xhal::rpc::Optohybrid::broadcastWrite(uint32_t ohN, char * regName, uint32_t value, uint32_t vfatMask)
+uint32_t xhal::client::rpcman::Optohybrid::broadcastWrite(uint32_t ohN, char * regName, uint32_t value, uint32_t vfatMask)
 {
     /* User supplies the VFAT node name as reg_name, examples:
      *
@@ -71,7 +71,7 @@ uint32_t xhal::rpc::Optohybrid::broadcastWrite(uint32_t ohN, char * regName, uin
     return 0;
 }
 
-uint32_t xhal::rpc::Optohybrid::configureScanModule(uint32_t ohN, uint32_t vfatN, uint32_t scanmode, bool useUltra, uint32_t vfatMask, uint32_t ch, uint32_t nevts, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep)
+uint32_t xhal::client::rpcman::Optohybrid::configureScanModule(uint32_t ohN, uint32_t vfatN, uint32_t scanmode, bool useUltra, uint32_t vfatMask, uint32_t ch, uint32_t nevts, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep)
 {
     req = wisc::RPCMsg("optohybrid.configureScanModule");
 
@@ -101,9 +101,9 @@ uint32_t xhal::rpc::Optohybrid::configureScanModule(uint32_t ohN, uint32_t vfatN
     }
 
     return 0;
-} //End configureScanModule(...)
+}
 
-uint32_t xhal::rpc::Optohybrid::printScanConfiguration(uint32_t ohN, bool useUltra)
+uint32_t xhal::client::rpcman::Optohybrid::printScanConfiguration(uint32_t ohN, bool useUltra)
 {
     req = wisc::RPCMsg("optohybrid.printScanConfiguration");
 
@@ -123,9 +123,9 @@ uint32_t xhal::rpc::Optohybrid::printScanConfiguration(uint32_t ohN, bool useUlt
     }
 
     return 0;
-} //End printScanConfiguration(...)
+}
 
-uint32_t xhal::rpc::Optohybrid::startScanModule(uint32_t ohN, bool useUltra)
+uint32_t xhal::client::rpcman::Optohybrid::startScanModule(uint32_t ohN, bool useUltra)
 {
     req = wisc::RPCMsg("optohybrid.startScanModule");
 
@@ -145,9 +145,9 @@ uint32_t xhal::rpc::Optohybrid::startScanModule(uint32_t ohN, bool useUltra)
     }
 
     return 0;
-} //End startScanModule(...)
+}
 
-uint32_t xhal::rpc::Optohybrid::getUltraScanResults(uint32_t ohN, uint32_t nevts, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t * result)
+uint32_t xhal::client::rpcman::Optohybrid::getUltraScanResults(uint32_t ohN, uint32_t nevts, uint32_t dacMin, uint32_t dacMax, uint32_t dacStep, uint32_t * result)
 {
     req = wisc::RPCMsg("optohybrid.getUltraScanResults");
 
@@ -176,9 +176,9 @@ uint32_t xhal::rpc::Optohybrid::getUltraScanResults(uint32_t ohN, uint32_t nevts
     }
 
     return 0;
-} //End getUltraScanResults(...)
+}
 
-uint32_t xhal::rpc::Optohybrid::stopCalPulse2AllChannels(uint32_t ohN, uint32_t mask, uint32_t ch_min, uint32_t ch_max)
+uint32_t xhal::client::rpcman::Optohybrid::stopCalPulse2AllChannels(uint32_t ohN, uint32_t mask, uint32_t ch_min, uint32_t ch_max)
 {
     req = wisc::RPCMsg("optohybrid.stopCalPulse2AllChannels");
 

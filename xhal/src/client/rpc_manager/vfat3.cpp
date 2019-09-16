@@ -1,13 +1,13 @@
 #include <array>
-#include "xhal/rpc/vfat3.h"
+#include "xhal/client/rpcman/vfat3.h"
 
-xhal::rpc::VFAT3::VFAT3(const std::string& board_domain_name, const std::string& address_table_filename):
-  xhal::XHALDevice(board_domain_name, address_table_filename)
+xhal::client::rpcman::VFAT3::VFAT3(const std::string& board_domain_name, const std::string& address_table_filename) :
+    xhal::client::XHALDevice(board_domain_name, address_table_filename)
 {
   this->loadModule("vfat3","vfat3 v1.0.1");
 }
 
-uint32_t xhal::rpc::VFAT3::configureVFAT3s(uint32_t ohN, uint32_t vfatMask)
+uint32_t xhal::client::rpcman::VFAT3::configureVFAT3s(uint32_t ohN, uint32_t vfatMask)
 {
     req = wisc::RPCMsg("vfat3.configureVFAT3s");
     req.set_word("vfatMask",vfatMask);
@@ -25,7 +25,7 @@ uint32_t xhal::rpc::VFAT3::configureVFAT3s(uint32_t ohN, uint32_t vfatMask)
     return 0;
 }
 
-uint32_t xhal::rpc::VFAT3::getChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatMask, uint32_t *chanRegData)
+uint32_t xhal::client::rpcman::VFAT3::getChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatMask, uint32_t *chanRegData)
 {
     req = wisc::RPCMsg("vfat3.getChannelRegistersVFAT3");
     req.set_word("ohN",ohN);
@@ -53,7 +53,7 @@ uint32_t xhal::rpc::VFAT3::getChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatM
     return 0;
 }
 
-uint32_t xhal::rpc::VFAT3::setChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatMask, uint32_t *calEnable, uint32_t *masks, uint32_t *trimARM, uint32_t *trimARMPol, uint32_t *trimZCC, uint32_t *trimZCCPol)
+uint32_t xhal::client::rpcman::VFAT3::setChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatMask, uint32_t *calEnable, uint32_t *masks, uint32_t *trimARM, uint32_t *trimARMPol, uint32_t *trimZCC, uint32_t *trimZCCPol)
 {
     req = wisc::RPCMsg("vfat3.setChannelRegistersVFAT3");
     req.set_word("ohN",ohN);
@@ -78,7 +78,7 @@ uint32_t xhal::rpc::VFAT3::setChannelRegistersVFAT3(uint32_t ohN, uint32_t vfatM
     return 0;
 }
 
-uint32_t xhal::rpc::VFAT3::setChannelRegistersVFAT3Simple(uint32_t ohN, uint32_t vfatMask, uint32_t *chanRegData)
+uint32_t xhal::client::rpcman::VFAT3::setChannelRegistersVFAT3Simple(uint32_t ohN, uint32_t vfatMask, uint32_t *chanRegData)
 {
     req = wisc::RPCMsg("vfat3.setChannelRegistersVFAT3");
     req.set_word("ohN",ohN);
