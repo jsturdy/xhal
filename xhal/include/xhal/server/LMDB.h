@@ -5,12 +5,13 @@
  * \author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
-#ifndef XHAL_LMDB_H
-#define XHAL_LMDB_H
+#ifndef XHAL_SERVER_LMDB_H
+#define XHAL_SERVER_LMDB_H
 
 #include <lmdb++.h>
 
 namespace xhal {
+  namespace server {
 
     /**
      * \brief Provides access to shared LMDB data structures.
@@ -96,6 +97,7 @@ namespace xhal {
         const lmdb::txn &rtxn() const noexcept;
     };
 
+  } // namespace xhal::server
 } // namespace xhal
 
-#endif // XHAL_LMDB_H
+#endif // XHAL_SERVER_LMDBXS_H

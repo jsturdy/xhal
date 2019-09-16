@@ -1,4 +1,4 @@
-#include "xhal/LMDB.h"
+#include "xhal/server/LMDB.h"
 
 #include <limits>
 #include <memory>
@@ -7,6 +7,7 @@
 #define DB_NAME "/address_table.mdb"
 
 namespace xhal {
+  namespace server {
     namespace /* anonymous */ {
         /// \brief Maximum size of the LMDB object, currently 50 MiB;
         static const std::size_t MAP_SIZE = 50UL * 1024UL * 1024UL;
@@ -116,5 +117,5 @@ namespace xhal {
     {
         return SINGLETON->rtxn;
     }
-
+  } // namespace xhal::server
 } // namespace xhal
