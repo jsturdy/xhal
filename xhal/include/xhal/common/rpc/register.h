@@ -7,21 +7,22 @@
  * \author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
-#ifndef XHAL_RPC_REGISTER_H
-#define XHAL_RPC_REGISTER_H
+#ifndef XHAL_COMMON_RPC_REGISTER_H
+#define XHAL_COMMON_RPC_REGISTER_H
 
-#include "xhal/rpc/common.h"
-#include "xhal/rpc/compat.h"
-#include "xhal/rpc/exceptions.h"
-#include "xhal/rpc/helper.h"
+#include "xhal/common/rpc/common.h"
+#include "xhal/common/rpc/compat.h"
+#include "xhal/common/rpc/exceptions.h"
+#include "xhal/common/rpc/helper.h"
 
 #include "moduleapi.h" // Only present in the CTP7 modules
 
 #include <typeinfo>
 
-namespace xhal { namespace rpc {
-
-    namespace helper {
+namespace xhal {
+  namespace common {
+    namespace rpc {
+      namespace helper {
 
         /**
          * \brief Handles an exception, setting the error key on the response.
@@ -108,7 +109,8 @@ namespace xhal { namespace rpc {
                                        typeid(Method).name(),
                                        xhal::rpc::invoke<Method>);
     }
+    }
+  }
+}
 
-}}
-
-#endif
+#endif // XHAL_COMMON_RPC_REGISTER_H

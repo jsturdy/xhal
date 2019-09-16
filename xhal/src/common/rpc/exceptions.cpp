@@ -1,10 +1,13 @@
-#include "xhal/rpc/exceptions.h"
+#include "xhal/common/rpc/exceptions.h"
 
-#include "xhal/rpc/common.h" // abiVersion
+#include "xhal/common/rpc/common.h" // abiVersion
 
 #include "cxxabi.h" // C++ Itanium ABI
 
-namespace xhal { namespace rpc { namespace helper {
+namespace xhal {
+  namespace common {
+    namespace rpc {
+      namespace helper {
 
     std::string getExceptionMessage(const std::exception &e)
     {
@@ -64,4 +67,7 @@ namespace xhal { namespace rpc { namespace helper {
         return msg;
     }
 
-}}} // namespace xhal::rpc::helper
+      }
+    }
+  }
+}

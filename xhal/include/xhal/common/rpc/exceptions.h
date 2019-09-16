@@ -5,12 +5,15 @@
  * \author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
-#ifndef XHAL_RPC_EXCEPTIONS_H
-#define XHAL_RPC_EXCEPTIONS_H
+#ifndef XHAL_COMMON_RPC_EXCEPTIONS_H
+#define XHAL_COMMON_RPC_EXCEPTIONS_H
 
-#include "xhal/rpc/wiscrpcsvc.h"
+#include "xhal/extern/wiscrpcsvc.h"
 
-namespace xhal { namespace rpc { namespace helper {
+namespace xhal {
+  namespace common {
+    namespace rpc {
+      namespace helper {
 
     /**
      * \brief Retrieves a user-friendly message for the given exception.
@@ -71,6 +74,9 @@ namespace xhal { namespace rpc { namespace helper {
      */
     std::string readExceptionMessage(const wisc::RPCMsg &response);
 
-}}} // namespace xhal::rpc::helper
+      }
+    }
+  }
+}
 
-#endif // XHAL_RPC_EXCEPTIONS_H
+#endif // XHAL_COMMON_RPC_EXCEPTIONS_H

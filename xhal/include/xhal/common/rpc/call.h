@@ -7,19 +7,21 @@
  * \author Louis Moureaux <lmoureau@ulb.ac.be>
  */
 
-#ifndef XHAL_RPC_CALL_H
-#define XHAL_RPC_CALL_H
+#ifndef XHAL_COMMON_RPC_CALL_H
+#define XHAL_COMMON_RPC_CALL_H
 
-#include "xhal/rpc/common.h"
-#include "xhal/rpc/compat.h"
-#include "xhal/rpc/exceptions.h"
-#include "xhal/rpc/helper.h"
+#include "xhal/common/rpc/common.h"
+#include "xhal/common/rpc/compat.h"
+#include "xhal/common/rpc/exceptions.h"
+#include "xhal/common/rpc/helper.h"
 
-#include "xhal/rpc/wiscrpcsvc.h" // move the header to xhal/extern/wiscrpcsvc.h ?
+#include "xhal/extern/wiscrpcsvc.h"
 
 #include <typeinfo>
 
-namespace xhal { namespace rpc {
+namespace xhal {
+  namespace common {
+    namespace rpc {
 
     /*!
      * \brief Remotely call a RPC method
@@ -152,7 +154,7 @@ namespace xhal { namespace rpc {
             throw MessageException(helper::getExceptionMessage(e));
         }
     }
+  }
+}
 
-}}
-
-#endif
+#endif // XHAL_COMMON_RPC_CALL_H

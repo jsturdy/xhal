@@ -5,11 +5,11 @@
  * \author Laurent Pétré <lpetre@ulb.ac.be>
  */
 
-#ifndef XHAL_RPC_COMMON_H
-#define XHAL_RPC_COMMON_H
+#ifndef XHAL_COMMON_RPC_COMMON_H
+#define XHAL_COMMON_RPC_COMMON_H
 
-#include "xhal/rpc/compat.h"
-#include "xhal/rpc/helper.h"
+#include "xhal/common/rpc/compat.h"
+#include "xhal/common/rpc/helper.h"
 
 #include <array>
 #include <cstdint>
@@ -18,9 +18,11 @@
 #include <utility>
 #include <vector>
 
-#include "xhal/rpc/wiscRPCMsg.h" // move the header to "xhal/extern/wiscRPCMsg.h" ?
+#include "xhal/extern/wiscRPCMsg.h"
 
-namespace xhal { namespace rpc {
+namespace xhal {
+  namespace common {
+    namespace rpc {
 
     /*!
      * \brief Defines the templated RPC ABI version
@@ -463,8 +465,9 @@ namespace xhal { namespace rpc {
         for (auto & elem: value) {
             msg & elem;
         }
+      }
     }
+  }
+}
 
-} }
-
-#endif
+#endif // XHAL_COMMON_RPC_COMMON_H

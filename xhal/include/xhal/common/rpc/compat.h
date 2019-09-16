@@ -11,13 +11,16 @@
  * \author Laurent Pétré <lpetre@ulb.ac.be>
  */
 
-#ifndef XHAL_RPC_COMPAT_H
-#define XHAL_RPC_COMPAT_H
+#ifndef XHAL_COMMON_RPC_COMPAT_H
+#define XHAL_COMMON_RPC_COMPAT_H
 
 #include <cstddef>
 #include <tuple>
 
-namespace xhal { namespace rpc { namespace compat {
+namespace xhal {
+  namespace common {
+    namespace rpc {
+      namespace compat {
 
     /*!
      * \brief This class can encapsulates any type, including \c void
@@ -141,6 +144,9 @@ namespace xhal { namespace rpc { namespace compat {
         return {};
     }
 
-} } }
+      }
+    }
+  }
+}
 
 #endif

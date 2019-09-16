@@ -9,13 +9,16 @@
  * \author Laurent Pétré <lpetre@ulb.ac.be>
  */
 
-#ifndef XHAL_RPC_HELPER_H
-#define XHAL_RPC_HELPER_H
+#ifndef XHAL_COMMON_RPC_HELPER_H
+#define XHAL_COMMON_RPC_HELPER_H
 
 #include <tuple>
 #include <type_traits>
 
-namespace xhal { namespace rpc { namespace helper {
+namespace xhal {
+  namespace common {
+    namespace rpc {
+      namespace helper {
 
     /*!
      * \brief Allows to extract types of a functor
@@ -116,6 +119,9 @@ namespace xhal { namespace rpc { namespace helper {
     template<typename T>
         using is_tuple = is_tuple_impl<typename std::decay<T>::type>;
 
-} } }
+      }
+    }
+  }
+}
 
-#endif
+#endif // XHAL_COMMON_RPC_HELPER_H
