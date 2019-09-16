@@ -7,11 +7,11 @@
 #define DB_NAME "/address_table.mdb"
 
 namespace /* anonymous */ {
-  /// \brief Maximum size of the LMDB object, currently 50 MiB;
+  /// @brief Maximum size of the LMDB object, currently 50 MiB;
   static const std::size_t MAP_SIZE = 50UL * 1024UL * 1024UL;
 
   /**
-   * \brief Creates the environment.
+   * @brief Creates the environment.
    *
    * Required as a separate function for the Singleton constructor.
    */
@@ -32,17 +32,17 @@ namespace /* anonymous */ {
   }
 
   /**
-   * \brief Shared data managed by the guards.
+   * @brief Shared data managed by the guards.
    */
   struct Singleton
   {
     // NOTE: Order is important!
-    lmdb::env env;  ///< \brief Environment
-    lmdb::txn rtxn; ///< \brief Read-only transaction
-    lmdb::dbi dbi;  ///< \brief Database handle
+    lmdb::env env;  ///< @brief Environment
+    lmdb::txn rtxn; ///< @brief Read-only transaction
+    lmdb::dbi dbi;  ///< @brief Database handle
 
     /**
-     * \brief Constructor.
+     * @brief Constructor.
      *
      * A constructor is required because LMDB objects don't have default constructors.
      */
@@ -55,12 +55,12 @@ namespace /* anonymous */ {
   };
 
   /**
-   * \brief Points to the data managed by the guards.
+   * @brief Points to the data managed by the guards.
    */
   std::unique_ptr<Singleton> SINGLETON = nullptr;
 
   /**
-   * \brief The number of guards currently active.
+   * @brief The number of guards currently active.
    */
   int GUARD_COUNT = 0;
 } // anonymous namespace
