@@ -44,15 +44,19 @@ namespace xhal {
             warn_min_value = -1;
             error_min_value = -1;
           }
-          ~Node(){}
+
+          ~Node() {}
+
           /**
            * @brief Adds child node
            */
           void addChild(Node child) {children.push_back(child);}
+
           /**
            * @brief Returns VHDL node name
            */
-          std::string getVhdlName(){return vhdlname;}
+          std::string getVhdlName() {return vhdlname;}
+
           /**
            * @brief Not implemented
            */
@@ -69,7 +73,7 @@ namespace xhal {
             //print 'Module:',self.isModule
             //print 'Parent:',self.parent.name
           }
-  
+
           /**
            * @brief Returns all hierarchy of chlid nodes
            * @param node parent node
@@ -77,17 +81,15 @@ namespace xhal {
            */
           void getAllChildren(Node node, std::vector<Node> kids)
           {
-            if (node.children.empty())
-            {
+            if (node.children.empty()) {
               kids.push_back(node);
             } else {
-              for (auto const& child: node.children)
-              {
+              for (auto const& child: node.children) {
                 getAllChildren(child, kids);
               }
             }
           }
-  
+
           std::string name;
           std::string description;
           std::string vhdlname;

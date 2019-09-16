@@ -3,7 +3,7 @@
  * XHAL exception base class
  *
  * @author Mykhailo Dalchenko
- * @version 1.0 
+ * @version 1.0
  */
 
 #ifndef XHAL_COMMON_UTILS_EXCEPTION_H
@@ -19,15 +19,13 @@ namespace xhal {                                                        \
     namespace utils {                                                   \
       class EXCEPTION_NAME : public std::exception {                    \
         public:                                                         \
-          EXCEPTION_NAME(std::string message) : msg(message) {          \
+          EXCEPTION_NAME(std::string message) :                         \
+            msg(message) {}                                             \
                                                                         \
-          }                                                             \
+          virtual ~EXCEPTION_NAME() {}                                  \
                                                                         \
-          virtual ~EXCEPTION_NAME() {                                   \
-                                                                        \
-          }                                                             \
-                                                                        \
-          virtual const char* what() const noexcept (true) override {   \
+          virtual const char* what() const noexcept (true) override     \
+          {                                                             \
               return msg.c_str();                                       \
           }                                                             \
                                                                         \
