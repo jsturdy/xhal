@@ -62,6 +62,7 @@ variables: *common_variables
 
 ### ------------------- Shared setup between stages ------------------- ###
 .common_setup: &common_setup |-
+  env | egrep CI
   mkdir -p ${ARTIFACTS_DIR}
   pip install -I --user "pip" "importlib" "codecov" "setuptools<38.2"
   sudo yum install -y wiscrpcsvc\* --enablerepo=gemos*
@@ -69,7 +70,6 @@ variables: *common_variables
   sudo yum install -y gem-peta-stage-ctp7 --enablerepo=gemos*
   sudo yum install -y lmdb\*
   source /data/bigdisk/sw/Xilinx/SDK/2016.2/settings64.sh
-  env | egrep CI
 
 .retry_settings: &retry_settings
   retry:
@@ -124,10 +124,12 @@ variables: *common_variables
     - /^release.*$/
     - /^feature.*$/
     - /^citest.*$/
-    - develop
-    - master
+    - /^develop$/
+    - /^master$/
+    - merge_requests
     - tags
   tags:
+    - peta
   stage: compile
   before_script:
     *before_compile
@@ -173,12 +175,13 @@ docs:
   <<: *cc7setup
   stage: compile
   only:
-    - /^feature.*ci-cd*$/
+    - /^release.*$/
+    - /^feature.*$/
     - /^citest.*$/
     - /^develop$/
-    - /^release.*$/
+    - /^master$/
+    - merge_requests
     - tags
-    - master
   dependencies:
   before_script:
     - eval `set | egrep '^(CI|GIT)' | awk -F= '{ print "export " $1 }'`
@@ -196,17 +199,28 @@ docs:
   coverage: '/Documentation coverage: \d+\.\d+/'
 
 ##### ------------------- Run tests using the compiled binaries ------------------- #####
+.test_artifacts: &test_artifacts
+  untracked: true
+  <<: *common_artifacts
+  expire_in: 1w
+
 .before_test: &before_test
   - eval `set | egrep '^(CI|GIT)' | awk -F= '{ print "export " $1 }'`
   - eval `set | egrep '^(BUILD|REL|PACK|ARTI|XDAQ|CMS|LD)' | awk -F= '{ print "export " $1 }'`
   - |
     sudo yum install -y wiscrpcsvc\* --enablerepo=gemos*
     sudo yum install -y reedmuller\* --enablerepo=gemos*
+    sudo yum install -y gem-peta-stage-ctp7 --enablerepo=gemos*
+    sudo yum install -y lmdb\*
+    sudo yum install -y abi-compliance-checker abi-dumper
+    source /data/bigdisk/sw/Xilinx/SDK/2016.2/settings64.sh
 
 # run tests using the binary built before
 test:cc7:
   <<: *cc7setup
   stage: test
+  # tags:
+  #   - peta
   dependencies:
     - compile:cc7
   before_script:
@@ -216,6 +230,28 @@ test:cc7:
   after_script:
     - 'echo "FIXME: parse-abi-changes.sh"'
     - 'echo "FIXME: test summary"'
+  coverage: '/Test coverage: \d+\.\d+/'
+
+test:abi:cc7:
+  <<: *cc7setup
+  stage: test
+  # tags:
+  #   - peta
+  only:
+    - merge_requests
+  dependencies:
+    - compile:cc7
+  before_script:
+    *before_test
+  script:
+    - make checkabi
+  allow_failure: true
+  after_script:
+    - find . -type d -iname compat_reports -print0 -exec tar cjf ${CI_PROJECT_NAME}_mr${CI_MERGE_REQUEST_ID}_abi_compat.tbz2 {} \+
+    - 'echo "FIXME: test summary"'
+  artifacts:
+    name: ${CI_JOB_STAGE}
+    <<: *test_artifacts
   coverage: '/Test coverage: \d+\.\d+/'
 
 # test:cc8:
@@ -277,48 +313,21 @@ test:cc7:
     <<: *package_artifacts
 
 # generate RPMs
-package:cc7:unstable:
+package:cc7:
   <<: *cc7setup
   only:
-    - /^develop$/
-    - /^feature.*ci-cd*$/
+    - /^release.*$/
+    - /^feature.*$/
     - /^citest.*$/
+    - /^develop$/
+    - /^master$/
+    - merge_requests
+    - tags
     # - triggers            ## should go into releases/'testing' or unstable?
     # - chat                ## should go into releases/'testing' or unstable?
     # - api                 ## should go into releases/'testing' or unstable?
   tags:
-  variables:
-    COMPILER: 'gcc'
-    PYEXE: 'python2.7'
-    PACKAGE_TYPE: 'unstable'
-  dependencies:
-    - compile:cc7
-    - docs
-  <<: *package_common
-
-package:cc7:testing:
-  <<: *cc7setup
-  only:
-    - /^release.*$/
-  tags:
-  variables:
-    COMPILER: 'gcc'
-    PYEXE: 'python2.7'
-    PACKAGE_TYPE: 'testing'
-  dependencies:
-    - compile:cc7
-    - docs
-  <<: *package_common
-
-package:cc7:base:
-  <<: *cc7setup
-  only:
-    - tags
-  tags:
-  variables:
-    COMPILER: 'gcc'
-    PYEXE: 'python2.7'
-    PACKAGE_TYPE: 'base'
+    - peta
   dependencies:
     - compile:cc7
     - docs
@@ -338,7 +347,7 @@ package:cc7:base:
   EOS_DOC_NAME:       "api"
   EOS_REPO_NAME:      "repos"
   EOS_SITE_WEB_DIR:   "${EOS_BASE_WEB_DIR}/${CI_PROJECT_NAME}"
-  EOS_SW_DIR:         "sw/${CI_PROJECT_NAME}"
+  EOS_SW_DIR:         "sw/gemos"
   EOS_DOCS_DIR:       "docs/${CI_PROJECT_NAME}"
   EOS_UNSTABLE_DIR:   "unstable"
   EOS_RELEASE_DIR:    "releases"
@@ -379,39 +388,22 @@ package:cc7:base:
 #   when: manual
 #   after_script:
 
-publish:unstable:
-  variables:
-    EOS_BASE_WEB_DIR: /tmp/
-  <<: *publish_common
-  only:
-    - /^feature.*ci-cd*$/
-    - /^citest.*$/
-    - /^develop$/
-  dependencies:
-    - package:cc7:unstable
-  after_script:
-    - ls -la ${ARTIFACTS_DIR}
-
-publish:testing:
+publish:
   <<: *publish_common
   only:
     - /^release.*$/
-  dependencies:
-    - package:cc7:testing
-  after_script:
-    # - notify mattermost
-    # - send email
-    # - generate_release.sh pre
-
-publish:base:
-  <<: *publish_common
-  only:
+    - /^feature.*$/
+    - /^citest.*$/
+    - /^develop$/
+    - /^master$/
+    - merge_requests
     - tags
+  tags:
   dependencies:
-    - package:cc7:base
+    - package:cc7
   after_script:
     - 'echo "FIXME: github_changelog_generator"'
     - 'echo "FIXME: generate_release_notes.sh"'
     # - notify mattermost
     # - send email
-    # - generate_release.sh rel
+    # - generate_release.sh pre

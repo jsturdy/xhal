@@ -17,12 +17,14 @@ include $(ConfigDir)/mfCommonDefs.mk
 
 ifeq ($(Arch),x86_64)
 include $(ConfigDir)/mfPythonDefs.mk
-CFLAGS=-fno-inline -Wall -pthread
-ADDFLAGS=-g -fPIC -std=c++11 -std=gnu++11 -m64
+CFLAGS=-Wall -pthread
+ADDFLAGS=-fPIC -std=c++11 -std=gnu++11 -m64
 else
 include $(ConfigDir)/mfZynq.mk
-ADDFLAGS=-g -std=gnu++14
+ADDFLAGS=-std=gnu++14
 endif
+
+ADDFLAGS+=$(OPTFLAGS)
 
 PackageSourceDir:=src
 PackageIncludeDir:=include

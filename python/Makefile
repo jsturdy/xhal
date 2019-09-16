@@ -11,6 +11,7 @@ SUBPACKAGES.CLEANRPM := $(patsubst %,%.cleanrpm, $(SUBPACKAGES))
 SUBPACKAGES.DOC      := $(patsubst %,%.doc,      $(SUBPACKAGES))
 SUBPACKAGES.CLEANDOC := $(patsubst %,%.cleandoc, $(SUBPACKAGES))
 SUBPACKAGES.CLEANALL := $(patsubst %,%.cleanall, $(SUBPACKAGES))
+SUBPACKAGES.CHECKABI := $(patsubst %,%.checkabi, $(SUBPACKAGES))
 
 .PHONY: $(SUBPACKAGES) \
 	$(SUBPACKAGES.CLEAN) \
@@ -21,9 +22,10 @@ SUBPACKAGES.CLEANALL := $(patsubst %,%.cleanall, $(SUBPACKAGES))
 	$(SUBPACKAGES.CLEANRPM) \
 	$(SUBPACKAGES.DOC) \
 	$(SUBPACKAGES.CLEANDOC) \
-	$(SUBPACKAGES.CLEANALL)
+	$(SUBPACKAGES.CLEANALL) \
+	$(SUBPACKAGES.CHECKABI)
 
-.PHONY: all build doc install uninstall rpm release
+.PHONY: all build checkabi doc install uninstall rpm release
 .PHONY: clean cleanall cleandoc cleanrpm
 build: $(SUBPACKAGES)
 
@@ -47,6 +49,8 @@ release: $(SUBPACKAGES.RELEASE)
 
 cleanall: $(SUBPACKAGES.CLEANALL)
 
+checkabi: $(SUBPACKAGES.CHECKABI)
+
 $(SUBPACKAGES):
 	$(MAKE) -C $@
 
@@ -64,6 +68,9 @@ $(SUBPACKAGES.CLEANRPM):
 
 $(SUBPACKAGES.CLEANALL):
 	$(MAKE) -C $(patsubst %.cleanall,%, $@) cleanall
+
+$(SUBPACKAGES.CHECKABI):
+
 
 $(SUBPACKAGES.DOC):
 	$(MAKE) -C $(patsubst %.doc,%, $@) html

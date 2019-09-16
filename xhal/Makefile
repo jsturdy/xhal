@@ -5,19 +5,21 @@ TARGETS.CLEAN      := $(patsubst %,%.clean,       $(TARGETS))
 TARGETS.CLEANRPM   := $(patsubst %,%.cleanrpm,    $(TARGETS))
 TARGETS.CLEANALLRPM:= $(patsubst %,%.cleanallrpm, $(TARGETS))
 TARGETS.CLEANALL   := $(patsubst %,%.cleanall,    $(TARGETS))
+TARGETS.CHECKABI   := $(patsubst %,%.checkabi,    $(TARGETS))
 TARGETS.INSTALL    := $(patsubst %,%.install,     $(TARGETS))
 TARGETS.UNINSTALL  := $(patsubst %,%.uninstall,   $(TARGETS))
 TARGETS.RELEASE    := $(patsubst %,%.release,     $(TARGETS))
 
 .PHONY: $(TARGETS) \
-	$(TARGETS.CLEAN) \
-	$(TARGETS.INSTALL) \
-	$(TARGETS.UNINSTALL) \
-	$(TARGETS.RELEASE) \
 	$(TARGETS.RPM) \
+	$(TARGETS.CLEAN) \
 	$(TARGETS.CLEANRPM) \
 	$(TARGETS.CLEANALLRPM) \
-	$(TARGETS.CLEANALL)
+	$(TARGETS.CLEANALL) \
+	$(TARGETS.CHECKABI) \
+	$(TARGETS.INSTALL) \
+	$(TARGETS.UNINSTALL) \
+	$(TARGETS.RELEASE)
 
 .PHONY: all default install uninstall rpm release
 .PHONY: clean cleanall cleanrpm cleanallrpm
@@ -35,6 +37,8 @@ cleanall: $(TARGETS.CLEANALL) cleandoc
 cleanrpm: $(TARGETS.CLEANRPM)
 
 cleanallrpm: $(TARGETS.CLEANALLRPM)
+
+checkabi: $(TARGETS.CHECKABI)
 
 install: $(TARGETS.INSTALL)
 
@@ -59,6 +63,9 @@ $(TARGETS.CLEANALLRPM):
 
 $(TARGETS.CLEANALL):
 	TargetArch=$(patsubst %.cleanall,%,$@) $(MAKE) -f xhal.mk cleanall
+
+$(TARGETS.CHECKABI):
+	TargetArch=$(patsubst %.checkabi,%,$@) $(MAKE) -f xhal.mk checkabi
 
 $(TARGETS.INSTALL):
 	TargetArch=$(patsubst %.install,%,$@) $(MAKE) -f xhal.mk install
