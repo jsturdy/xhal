@@ -1,7 +1,6 @@
 SUBPACKAGES := \
         python \
-        xhalcore \
-        xhalarm
+        xhal
 
 SUBPACKAGES.RPM        := $(patsubst %,%.rpm,         $(SUBPACKAGES))
 SUBPACKAGES.CLEAN      := $(patsubst %,%.clean,       $(SUBPACKAGES))
@@ -36,6 +35,10 @@ cleanrpm: $(SUBPACKAGES.CLEANRPM)
 cleandoc: $(SUBPACKAGES.CLEANDOC)
 
 clean: $(SUBPACKAGES.CLEAN) $(SUBPACKAGES.CLEANRPM) $(SUBPACKAGES.CLEANDOC) 
+
+cleanallrpm: $(SUBPACKAGES.CLEANALLRPM)
+
+cleanall: $(SUBPACKAGES.CLEANALL)
 
 install: $(SUBPACKAGES.INSTALL)
 

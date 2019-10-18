@@ -1,87 +1,93 @@
-BUILD_HOME   := $(shell dirname `cd ../; pwd`)
-Project      := xhal
-Package      := xhal
-ShortPackage := xhal
-LongPackage  := xhalcore
-PackageName  := $(ShortPackage)
-PackagePath  := $(shell pwd)
-PackageDir   := pkg/$(ShortPackage)
-Packager     := Mykhailo Dalchenko
-Arch         := x86_64
+TARGETS := arm x86_64
 
-XHAL_VER_MAJOR:=$(shell $(BUILD_HOME)/$(Project)/config/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
-XHAL_VER_MINOR:=$(shell $(BUILD_HOME)/$(Project)/config/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
-XHAL_VER_PATCH:=$(shell $(BUILD_HOME)/$(Project)/config/tag2rel.sh | awk '{split($$0,a," "); print a[3];}' | awk '{split($$0,b,":"); print b[2];}')
+TARGETS.RPM        := $(patsubst %,%.rpm,         $(TARGETS))
+TARGETS.CLEAN      := $(patsubst %,%.clean,       $(TARGETS))
+TARGETS.CLEANRPM   := $(patsubst %,%.cleanrpm,    $(TARGETS))
+TARGETS.CLEANALLRPM:= $(patsubst %,%.cleanallrpm, $(TARGETS))
+TARGETS.CLEANALL   := $(patsubst %,%.cleanall,    $(TARGETS))
+TARGETS.CHECKABI   := $(patsubst %,%.checkabi,    $(TARGETS))
+TARGETS.INSTALL    := $(patsubst %,%.install,     $(TARGETS))
+TARGETS.UNINSTALL  := $(patsubst %,%.uninstall,   $(TARGETS))
+TARGETS.RELEASE    := $(patsubst %,%.release,     $(TARGETS))
 
-INSTALL_PREFIX=/opt/xhal
+.PHONY: $(TARGETS) \
+	$(TARGETS.RPM) \
+	$(TARGETS.CLEAN) \
+	$(TARGETS.CLEANRPM) \
+	$(TARGETS.CLEANALLRPM) \
+	$(TARGETS.CLEANALL) \
+	$(TARGETS.CHECKABI) \
+	$(TARGETS.INSTALL) \
+	$(TARGETS.UNINSTALL) \
+	$(TARGETS.RELEASE)
 
-include $(BUILD_HOME)/$(Project)/config/mfCommonDefs.mk
-include $(BUILD_HOME)/$(Project)/config/mfRPMRules.mk
+.PHONY: all default install uninstall rpm release
+.PHONY: clean cleanrpm cleandoc cleanallrpm cleanall
 
-CCFLAGS=-O0 -g3 -fno-inline -Wall -fPIC -pthread -m64
-ADDFLAGS=-std=gnu++14
+default: all
 
-IncludeDirs= /opt/xdaq/include
-IncludeDirs+= /opt/rh/devtoolset-6/root/usr/include
-IncludeDirs+= ${BUILD_HOME}/${Project}/${LongPackage}/include
-INC=$(IncludeDirs:%=-I%)
+all: $(TARGETS) doc
 
-Libraries+= -llog4cplus -lxerces-c -lwiscrpcsvc
-LibraryDirs+=-L/opt/xdaq/lib
-LibraryDirs+=-L/opt/wiscrpcsvc/lib
-LIB=$(LibraryDirs)
-LIB+= $(Libraries)
+rpm: $(TARGETS) $(TARGETS.RPM)
 
-LDFLAGS= -shared
-SRCS_UTILS = $(shell echo src/common/utils/*.cpp)
-SRCS_XHAL = $(shell echo src/common/*.cpp)
-OBJS_UTILS = $(SRCS_UTILS:.cpp=.o)
-OBJS_XHAL = $(SRCS_XHAL:.cpp=.o)
-SRCS_RPC_MAN = $(shell echo src/common/rpc_manager/*.cc)
-OBJS_RPC_MAN = $(SRCS_RPC_MAN:.cc=.o)
+clean: $(TARGETS.CLEAN)
 
-XHALCORE_LIB=${BUILD_HOME}/${Project}/${LongPackage}/lib/libxhal.so
-RPC_MAN_LIB=${BUILD_HOME}/${Project}/${LongPackage}/lib/librpcman.so
+cleanall: $(TARGETS.CLEANALL) cleandoc
 
-.PHONY: clean xhalcore rpc prerpm
+cleanrpm: $(TARGETS.CLEANRPM)
 
-default:
-	@echo "Running default target"
-	$(MakeDir) $(PackageDir)
+cleanallrpm: $(TARGETS.CLEANALLRPM)
 
-_rpmprep: preprpm
-	@echo "Running _rpmprep target"
-preprpm: default
-	@echo "Running preprpm target"
-	@cp -rf lib $(PackageDir)
+checkabi: $(TARGETS.CHECKABI)
 
-build: xhalcore rpc
+install: $(TARGETS.INSTALL)
 
-_all:${XHALCORE_LIB} ${RPC_MAN_LIB} 
+uninstall: $(TARGETS.UNINSTALL)
 
-rpc:${RPC_MAN_LIB}
+release: $(TARGETS.RELEASE)
 
-xhalcore:${XHALCORE_LIB}
+$(TARGETS):
+	TargetArch=$@ $(MAKE) -f xhal.mk build
 
-$(XHALCORE_LIB): $(OBJS_UTILS) $(OBJS_XHAL)
-	@mkdir -p ${BUILD_HOME}/${Project}/${LongPackage}/lib/
-	$(CC) $(CCFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) $(LIB) -o $@ $^
+$(TARGETS.RPM):
+	TargetArch=$(patsubst %.rpm,%,$@) $(MAKE) -f xhal.mk rpm
 
-$(OBJS_UTILS):$(SRCS_UTILS)
-	    $(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
+$(TARGETS.CLEAN):
+	TargetArch=$(patsubst %.clean,%,$@) $(MAKE) -f xhal.mk clean
 
-$(OBJS_XHAL):$(SRCS_XHAL)
-	    $(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c -o $@ $<
+$(TARGETS.CLEANRPM):
+	TargetArch=$(patsubst %.cleanrpm,%,$@) $(MAKE) -f xhal.mk cleanrpm
 
-$(RPC_MAN_LIB): $(OBJS_RPC_MAN)
-	$(CC) $(CCFLAGS) $(ADDFLAGS) ${LDFLAGS} $(INC) $(LIB) -o $@ $^
+$(TARGETS.CLEANALLRPM):
+	TargetArch=$(patsubst %.cleanallrpm,%,$@) $(MAKE) -f xhal.mk cleanallrpm
 
-$(OBJS_RPC_MAN):$(SRCS_RPC_MAN)
-	$(CC) $(CCFLAGS) $(ADDFLAGS) $(INC) $(LIB) -c $(@:%.o=%.cc) -o $@ 
+$(TARGETS.CLEANALL):
+	TargetArch=$(patsubst %.cleanall,%,$@) $(MAKE) -f xhal.mk cleanall
 
-clean:
-	-${RM} ${XHALCORE_LIB} ${OBJS_UTILS} ${OBJS_XHAL} ${RPC_MAN_LIB} ${OBJS_RPC_MAN}
-	-rm -rf $(PackageDir)
+$(TARGETS.CHECKABI):
+	TargetArch=$(patsubst %.checkabi,%,$@) $(MAKE) -f xhal.mk checkabi
+
+$(TARGETS.INSTALL):
+	TargetArch=$(patsubst %.install,%,$@) $(MAKE) -f xhal.mk install
+
+$(TARGETS.UNINSTALL):
+	TargetArch=$(patsubst %.uninstall,%,$@) $(MAKE) -f xhal.mk uninstall
+
+$(TARGETS.RELEASE):
+	TargetArch=$(patsubst %.release,%,$@) $(MAKE) -f xhal.mk release
+
+doc:
+	@echo "TO DO"
 
 cleandoc: 
 	@echo "TO DO"
+
+arm:
+
+x86_64:
+
+ctp7:
+
+bcp:
+
+apx:

@@ -14,41 +14,45 @@ PackageName  := $(ShortPackage)
 PackagePath  := $(shell pwd)
 PackageDir   := pkg/$(Namespace)/$(ShortPackage)
 ScriptDir    := pkg/$(Namespace)/scripts
+INSTALL_PATH=/opt/$(Namespace)
 
+ProjectBase = $(BUILD_HOME)/$(Project)
+ConfigDir   = $(ProjectBase)/config
+
+include $(ConfigDir)/mfCommonDefs.mk
+include $(ConfigDir)/mfPythonDefs.mk
 
 # Explicitly define the modules that are being exported (for PEP420 compliance)
 PythonModules = ["$(Namespace).$(ShortPackage)"]
 $(info PythonModules=${PythonModules})
 
-REG_INTERFACE_GEM_VER_MAJOR:=$(shell $(BUILD_HOME)/$(Project)/config/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
-REG_INTERFACE_GEM_VER_MINOR:=$(shell $(BUILD_HOME)/$(Project)/config/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
-REG_INTERFACE_GEM_VER_PATCH:=$(shell $(BUILD_HOME)/$(Project)/config/tag2rel.sh | awk '{split($$0,a," "); print a[3];}' | awk '{split($$0,b,":"); print b[2];}')
+REG_INTERFACE_GEM_VER_MAJOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[1];}' | awk '{split($$0,b,":"); print b[2];}')
+REG_INTERFACE_GEM_VER_MINOR:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[2];}' | awk '{split($$0,b,":"); print b[2];}')
+REG_INTERFACE_GEM_VER_PATCH:=$(shell $(ConfigDir)/tag2rel.sh | awk '{split($$0,a," "); print a[3];}' | awk '{split($$0,b,":"); print b[2];}')
 
-include $(BUILD_HOME)/$(Project)/config/mfCommonDefs.mk
-include $(BUILD_HOME)/$(Project)/config/mfPythonDefs.mk
+include $(ConfigDir)/mfPythonRPM.mk
+include $(ConfigDir)/mfSphinx.mk
 
-# include $(BUILD_HOME)/$(Project)/config/mfDefs.mk
-
-include $(BUILD_HOME)/$(Project)/config/mfPythonRPM.mk
-include $(BUILD_HOME)/$(Project)/config/mfSphinx.mk
+PythonSources=$(wildcard core/*.py)
+PythonSources+=$(wildcard scripts/*.py)
 
 default:
-	@echo "Running default target"
 	$(MakeDir) $(PackageDir)
 	@echo "__path__ = __import__('pkgutil').extend_path(__path__, __name__)" > pkg/$(Namespace)/__init__.py
 	@cp -rf __init__.py $(PackageDir)
 
-# need to ensure that the python only stuff is packaged into RPMs
-.PHONY: clean preprpm
-_rpmprep: preprpm
-	@echo "Running _rpmprep target"
-preprpm: default
-	@echo "Running preprpm target"
+# Override, as this package uses pkg/setup.py as the template file
+$(PackageSetupFile): pkg/setup.py
+$(PackagePrepFile): $(PythonSources) Makefile | default
+	@cp -rf $(ConfigDir)/scriptlets/installrpm.sh pkg/
+	@perl -pi -e "s|__PYTHON_SCRIPT_PATH__|$(INSTALL_PATH)/bin|g" pkg/installrpm.sh
+	@perl -pi -e "s|__PYTHON_NAMESPACE__|$(Namespace)|g" pkg/installrpm.sh
 	$(MakeDir) $(ScriptDir)
 	@cp -rf scripts/*  $(ScriptDir)
 	@cp -rf core $(PackageDir)
 	-cp -rf README.md LICENSE CHANGELOG.md MANIFEST.in requirements.txt $(PackageDir)
 	-cp -rf README.md LICENSE CHANGELOG.md MANIFEST.in requirements.txt pkg
+	touch $@
 
 clean:
 	@echo "Running clean target"
@@ -60,11 +64,7 @@ clean:
 	-rm -f  pkg/MANIFEST.in
 	-rm -f  pkg/CHANGELOG.md
 	-rm -f  pkg/requirements.txt
-
-rpm: _rpmall _rpmarm _harvest
-	@echo "Running xhal reg_interface_gem rpm target"
-	find $(RPMBUILD_DIR)/dist -iname "*.rpm" -print0 -exec mv -t $(RPMBUILD_DIR) {} \+
-	find $(RPMBUILD_DIR)/arm -iname "*.rpm" -print0 -exec mv -t $(RPMBUILD_DIR) {} \+
+	-rm -f  pkg/installrpm.sh
 
 print-env:
 	@echo BUILD_HOME     $(BUILD_HOME)
